@@ -82,6 +82,7 @@ export interface UserStats {
   totalDelays: number;
   weeklyProgress: number[];
   achievements: Achievement[];
+  savingsGoalLevel?: number; // 1-4
 }
 
 export interface Achievement {
@@ -116,6 +117,7 @@ export interface AppState {
   locale: import('@/lib/locale').LocaleConfig | null;
   discoveredRestaurants: Restaurant[] | null;
   restaurantsLoading: boolean;
+  onboardingDone: boolean;
 }
 
 export type ScreenName =

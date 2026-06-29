@@ -6,7 +6,7 @@ import type { LocaleConfig } from '@/lib/locale';
 
 const STORAGE_KEY = 'savrly_v1';
 
-type PersistedSlice = Pick<AppState, 'favorites' | 'orders' | 'userStats' | 'addresses'>;
+type PersistedSlice = Pick<AppState, 'favorites' | 'orders' | 'userStats' | 'addresses' | 'onboardingDone'>;
 
 function loadPersisted(): Partial<PersistedSlice> {
   try {
@@ -19,6 +19,7 @@ function loadPersisted(): Partial<PersistedSlice> {
     if (Array.isArray(parsed.orders)) safe.orders = parsed.orders;
     if (Array.isArray(parsed.addresses)) safe.addresses = parsed.addresses;
     if (parsed.userStats && typeof parsed.userStats === 'object') safe.userStats = parsed.userStats as AppState['userStats'];
+    if (typeof parsed.onboardingDone === 'boolean') safe.onboardingDone = parsed.onboardingDone;
     return safe;
   } catch {
     return {};
@@ -32,6 +33,7 @@ function savePersisted(state: AppState): void {
       orders: state.orders,
       userStats: state.userStats,
       addresses: state.addresses,
+      onboardingDone: state.onboardingDone,
     };
     localStorage.setItem(STORAGE_KEY, JSON.stringify(slice));
   } catch {
@@ -71,6 +73,7 @@ const baseState: AppState = {
   locale: getLocaleFromTimezone(),
   discoveredRestaurants: null,
   restaurantsLoading: false,
+  onboardingDone: false,
 };
 
 const initialState: AppState = { ...baseState, ...loadPersisted() };
@@ -97,7 +100,8 @@ type Action =
   | { type: 'SET_LOCALE'; locale: LocaleConfig }
   | { type: 'SET_CITY'; city: string }
   | { type: 'SET_DISCOVERED_RESTAURANTS'; restaurants: import('@/types').Restaurant[] }
-  | { type: 'SET_RESTAURANTS_LOADING'; loading: boolean };
+  | { type: 'SET_RESTAURANTS_LOADING'; loading: boolean }
+  | { type: 'SET_ONBOARDING_DONE' };
 
 function appReducer(state: AppState, action: Action): AppState {
   switch (action.type) {
@@ -203,6 +207,8 @@ function appReducer(state: AppState, action: Action): AppState {
       return { ...state, discoveredRestaurants: action.restaurants };
     case 'SET_RESTAURANTS_LOADING':
       return { ...state, restaurantsLoading: action.loading };
+    case 'SET_ONBOARDING_DONE':
+      return { ...state, onboardingDone: true };
     default:
       return state;
   }
@@ -224,7 +230,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   // Persist user data across page refreshes
   useEffect(() => {
     savePersisted(state);
-  }, [state.favorites, state.orders, state.userStats, state.addresses]);
+  }, [state.favorites, state.orders, state.userStats, state.addresses, state.onboardingDone]);
 
   const navigate = useCallback(
     (screen: ScreenName, opts?: { restaurantId?: string; menuItemId?: string }) => {

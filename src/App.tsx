@@ -16,6 +16,7 @@ import { ProductSheet } from '@/components/ProductSheet';
 import { CheckoutSheet } from '@/components/CheckoutSheet';
 import { LocationSheet } from '@/components/LocationSheet';
 import { SplashScreen } from '@/components/SplashScreen';
+import { OnboardingScreen } from '@/screens/OnboardingScreen';
 
 function ScreenRouter() {
   const { state } = useApp();
@@ -58,6 +59,7 @@ function AppShell() {
         <ScreenRouter />
       </main>
 
+      {!state.onboardingDone && <OnboardingScreen />}
       <LocationSheet />
       <CartSheet />
       <ProductSheet />

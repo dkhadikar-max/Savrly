@@ -43,7 +43,7 @@ export function EatlistScreen() {
                         <Star size={11} className="text-green-600" fill="#16A34A" />
                         <span className="text-xs text-green-700 font-medium">{r.rating}</span>
                       </div>
-                      <span className="text-gray-300">\u00b7</span>
+                      <span className="text-gray-300">&middot;</span>
                       <div className="flex items-center gap-0.5">
                         <Clock size={11} className="text-gray-400" />
                         <span className="text-xs text-gray-500">{r.deliveryTime}</span>
