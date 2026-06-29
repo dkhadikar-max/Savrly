@@ -2129,12 +2129,12 @@ export const addresses: Address[] = [
   {
     id: 'home',
     label: 'Home',
-    address: '742 Evergreen Terrace, Springfield',
+    address: '24, MG Road, Bengaluru, Karnataka 560001',
   },
   {
     id: 'work',
     label: 'Work',
-    address: '1000 Broadway Ave, Suite 500, Springfield',
+    address: 'Embassy Tech Village, Devarabeesanahalli, Bengaluru 560103',
   },
 ];
 
@@ -2236,21 +2236,21 @@ export const offers = [
   {
     id: 'offer1',
     title: '50% OFF First Order',
-    subtitle: 'Up to $15 off',
+    subtitle: 'Savrly welcome offer · New users only',
     code: 'WELCOME50',
     color: '#EF4444',
   },
   {
     id: 'offer2',
     title: 'Free Delivery',
-    subtitle: 'On orders over $25',
+    subtitle: 'On qualifying orders · No minimum',
     code: 'FREEDEL',
     color: '#F59E0B',
   },
   {
     id: 'offer3',
-    title: '$10 Off',
-    subtitle: 'Weekend special',
+    title: 'Weekend Special',
+    subtitle: 'Flat discount · Valid Sat & Sun only',
     code: 'WEEKEND10',
     color: '#10B981',
   },

@@ -43,12 +43,12 @@ export function ProfileScreen() {
         {/* User Info */}
         <div className="px-4 py-6 flex items-center gap-4">
           <div className="w-16 h-16 rounded-full bg-gray-900 flex items-center justify-center text-white text-xl font-bold">
-            J
+            U
           </div>
           <div>
-            <h2 className="text-lg font-semibold text-gray-900">John Doe</h2>
-            <p className="text-sm text-gray-500">john.doe@email.com</p>
-            <p className="text-xs text-gray-400">+1 (555) 123-4567</p>
+            <h2 className="text-lg font-semibold text-gray-900">Your Name</h2>
+            <p className="text-sm text-gray-500">you@example.com</p>
+            <p className="text-xs text-gray-400">Sign in to personalise</p>
           </div>
         </div>
 

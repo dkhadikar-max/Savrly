@@ -1,0 +1,10 @@
+{
+  "name": "Savrly",
+  "short_name": "Savrly",
+  "description": "Mindful food delivery — discover restaurants, resist cravings, track your savings.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#111827",
+  "orientation": "portrait"
+}

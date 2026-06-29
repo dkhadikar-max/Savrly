@@ -59,7 +59,7 @@ export function HomeScreen() {
   const locationGranted = state.locationPermission === 'granted';
   const locationRequesting = state.locationPermission === 'requesting';
 
-  const { locale } = useLocale();
+  const { locale, formatPrice } = useLocale();
   const countryCode = locale.countryCode;
   const userCity = state.userCity;
 
@@ -112,8 +112,8 @@ export function HomeScreen() {
           ) : locationGranted ? (
             <span className="text-xs text-green-600 ml-0.5 font-medium">Current Location</span>
           ) : (
-            <span className="text-xs text-gray-500 ml-0.5 truncate max-w-[200px]">
-              742 Evergreen Terrace
+            <span className="text-xs text-gray-400 ml-0.5 truncate max-w-[200px]">
+              Add delivery address
             </span>
           )}
         </button>
@@ -148,7 +148,7 @@ export function HomeScreen() {
             <div className="absolute bottom-4 left-4 right-4">
               <p className="text-white/80 text-xs font-medium">Limited time offer</p>
               <p className="text-white text-lg font-bold">50% OFF Your First Order</p>
-              <p className="text-white/90 text-xs">Up to $15 off \u00b7 Code: WELCOME50</p>
+              <p className="text-white/90 text-xs">Up to {formatPrice(15)} off \u00b7 Code: WELCOME50</p>
             </div>
           </div>
         </div>
