@@ -199,14 +199,14 @@ export function InterventionScreen() {
               <h3 className="text-sm font-semibold text-gray-900 mb-3">This Week</h3>
               <div className="flex items-end justify-between gap-2 h-20">
                 {['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].map((day, i) => {
-                  const isActive = i < 6;
+                  const isActive = state.userStats.weeklyProgress[i] === 1;
                   return (
                     <div key={day} className="flex flex-col items-center gap-1 flex-1">
                       <div
                         className={`w-full rounded-lg ${
                           isActive ? 'bg-green-500' : 'bg-gray-200'
                         }`}
-                        style={{ height: `${isActive ? 60 - i * 5 : 20}%` }}
+                        style={{ height: `${isActive ? 80 : 20}%` }}
                       />
                       <span className="text-[10px] text-gray-500">{day}</span>
                     </div>

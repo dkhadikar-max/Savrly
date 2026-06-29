@@ -215,7 +215,7 @@ export function CheckoutSheet() {
 
               <div className="flex justify-between text-sm">
                 <span className="text-gray-500">
-                  GST &amp; restaurant charges
+                  {locale.countryCode === 'IN' ? 'GST & charges' : 'Tax & charges'}
                 </span>
                 <span className="text-gray-900">{formatPrice(tax)}</span>
               </div>

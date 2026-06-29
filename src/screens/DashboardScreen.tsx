@@ -17,7 +17,7 @@ export function DashboardScreen() {
   const stats = state.userStats;
 
   const weeklyData = stats.weeklyProgress;
-  const streakPercentage = (stats.currentStreak / stats.longestStreak) * 100;
+  const streakPercentage = stats.longestStreak > 0 ? (stats.currentStreak / stats.longestStreak) * 100 : 0;
 
   return (
     <div className="flex flex-col h-full bg-white">
