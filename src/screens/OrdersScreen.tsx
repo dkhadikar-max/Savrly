@@ -1,9 +1,11 @@
 import { Receipt, RotateCcw } from 'lucide-react';
 import { useApp } from '@/store/AppContext';
 import { restaurants } from '@/data';
+import { useLocale } from '@/hooks/useLocale';
 
 export function OrdersScreen() {
   const { state, navigate } = useApp();
+  const { formatPrice } = useLocale();
 
   return (
     <div className="flex flex-col h-full bg-white">
@@ -45,7 +47,7 @@ export function OrdersScreen() {
                   </span>
                 </div>
                 <div className="flex items-center justify-between mt-3 pt-3 border-t border-gray-200">
-                  <p className="text-sm font-semibold">${order.total.toFixed(2)}</p>
+                  <p className="text-sm font-semibold">{formatPrice(order.total)}</p>
                   <button
                     className="flex items-center gap-1 text-xs font-medium text-gray-600 bg-white px-3 py-1.5 rounded-full active:bg-gray-100"
                     onClick={() => {

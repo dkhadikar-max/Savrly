@@ -2,9 +2,11 @@ import { useState, useRef, useEffect } from 'react';
 import { Search, X, Clock, TrendingUp, ArrowLeft, Star } from 'lucide-react';
 import { useApp } from '@/store/AppContext';
 import { restaurants, popularSearches, trendingSearches } from '@/data';
+import { useLocale } from '@/hooks/useLocale';
 
 export function SearchScreen() {
   const { navigate, goBack, state, dispatch } = useApp();
+  const { formatPrice } = useLocale();
   const [query, setQuery] = useState(state.searchQuery || '');
   const [recentSearches, setRecentSearches] = useState([
     'Pizza',
@@ -210,7 +212,7 @@ export function SearchScreen() {
                     <div className="flex-1 min-w-0">
                       <p className="text-sm font-medium text-gray-900">{item.name}</p>
                       <p className="text-xs text-gray-500 truncate">{item.restaurantName}</p>
-                      <p className="text-xs font-semibold text-gray-900">${item.price.toFixed(2)}</p>
+                      <p className="text-xs font-semibold text-gray-900">{formatPrice(item.price)}</p>
                     </div>
                   </button>
                 ))}
