@@ -18,17 +18,18 @@ export function SplashScreen({ onDone }: Props) {
 
   return (
     <div
-      className={`absolute inset-0 z-[100] bg-neutral-900 flex items-center justify-center transition-opacity duration-500 ${
+      className={`absolute inset-0 z-[100] flex items-center justify-center transition-opacity duration-500 ${
         fading ? 'opacity-0' : 'opacity-100'
       }`}
+      style={{ backgroundColor: '#0D0D0D' }}
     >
       <div className="savrly-logo-float flex flex-col items-center gap-3">
-        <div className="savrly-logo rounded-2xl px-6 py-4">
-          <span className="text-4xl font-bold tracking-tight text-white">
+        <div className="savrly-logo rounded-2xl px-6 py-4" style={{ backgroundColor: '#1A1A1A' }}>
+          <span className="text-4xl font-bold tracking-tight" style={{ color: '#F97316' }}>
             Savrly
           </span>
         </div>
-        <span className="text-xs text-white/40 tracking-widest uppercase">
+        <span className="text-xs tracking-widest uppercase" style={{ color: 'rgba(255,255,255,0.4)' }}>
           Mindful Eating
         </span>
       </div>
