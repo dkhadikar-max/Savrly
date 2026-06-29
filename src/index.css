@@ -48,3 +48,21 @@
     scrollbar-width: none;
   }
 }
+
+/* Pulse glow effect */
+@keyframes savrly-pulse {
+  0%, 100% { box-shadow: 0 0 20px rgba(249, 115, 22, 0.3); }
+  50% { box-shadow: 0 0 40px rgba(249, 115, 22, 0.6); }
+}
+.savrly-logo {
+  animation: savrly-pulse 2s ease-in-out infinite;
+}
+
+/* Float animation */
+@keyframes savrly-float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+.savrly-logo-float {
+  animation: savrly-float 3s ease-in-out infinite;
+}
