@@ -14,9 +14,10 @@ export function CartSheet() {
 
   const subtotal = state.cart.reduce((sum, item) => sum + item.menuItem.price * item.quantity, 0);
   const deliveryFee = cartRestaurant?.deliveryFee ?? 0;
-  const tax = subtotal * 0.08;
+  const { formatPrice, locale } = useLocale();
+  const taxRate = locale.countryCode === 'IN' ? 0.05 : 0.08;
+  const tax = subtotal * taxRate;
   const total = subtotal + deliveryFee + tax;
-  const { formatPrice } = useLocale();
 
   const handleClose = () => dispatch({ type: 'TOGGLE_CART_SHEET', show: false });
 
@@ -127,16 +128,16 @@ export function CartSheet() {
                   </div>
                   <div className="flex justify-between text-sm">
                     <span className="text-gray-500">Delivery fee</span>
-                    <span className="text-gray-900">
-                      {deliveryFee === 0 ? 'Free' : formatPrice(deliveryFee)}
+                    <span className={deliveryFee === 0 ? 'text-green-600 font-medium' : 'text-gray-900'}>
+                      {deliveryFee === 0 ? 'FREE' : formatPrice(deliveryFee)}
                     </span>
                   </div>
                   <div className="flex justify-between text-sm">
-                    <span className="text-gray-500">Taxes (8%)</span>
+                    <span className="text-gray-500">GST &amp; charges</span>
                     <span className="text-gray-900">{formatPrice(tax)}</span>
                   </div>
                   <div className="flex justify-between text-base font-bold pt-2 border-t border-gray-100">
-                    <span>Total</span>
+                    <span>To Pay</span>
                     <span>{formatPrice(total)}</span>
                   </div>
                 </div>

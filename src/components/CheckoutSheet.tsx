@@ -4,6 +4,8 @@ import { useApp } from '@/store/AppContext';
 import { restaurants, addresses } from '@/data';
 import { useLocale } from '@/hooks/useLocale';
 
+const PLATFORM_FEE_USD = 0.2; // ≈ ₹3 for India via formatPrice
+
 export function CheckoutSheet() {
   const { state, dispatch, navigate } = useApp();
   const [selectedAddress, setSelectedAddress] = useState(addresses[0]?.id ?? '');
@@ -21,9 +23,10 @@ export function CheckoutSheet() {
   const subtotal = state.cart.reduce((sum, item) => sum + item.menuItem.price * item.quantity, 0);
   const deliveryFee = cartRestaurant?.deliveryFee ?? 0;
   const discount = promoApplied ? subtotal * 0.2 : 0;
-  const tax = (subtotal - discount) * 0.08;
-  const total = subtotal + deliveryFee + tax - discount;
-  const { formatPrice } = useLocale();
+  const { formatPrice, locale } = useLocale();
+  const taxRate = locale.countryCode === 'IN' ? 0.05 : 0.08;
+  const tax = (subtotal - discount) * taxRate;
+  const total = subtotal + deliveryFee + PLATFORM_FEE_USD + tax - discount;
 
   const handleClose = () => dispatch({ type: 'TOGGLE_CHECKOUT_SHEET', show: false });
 
@@ -122,7 +125,7 @@ export function CheckoutSheet() {
             <div className="flex items-center gap-3 p-3 rounded-xl border-2 border-gray-900 bg-gray-50">
               <div className="w-8 h-5 bg-gray-800 rounded" />
               <div className="flex-1">
-                <p className="text-sm font-semibold text-gray-900">\u2022\u2022\u2022\u2022 4242</p>
+                <p className="text-sm font-semibold text-gray-900">{'••••'} 4242</p>
                 <p className="text-xs text-gray-500">Expires 12/27</p>
               </div>
               <Check size={16} className="text-gray-900" />
@@ -167,46 +170,67 @@ export function CheckoutSheet() {
             />
           </div>
 
-          {/* Order Summary */}
+          {/* Bill Details — Swiggy style */}
           <div className="mb-6">
-            <h3 className="text-sm font-semibold text-gray-900 mb-3">Order Summary</h3>
+            <h3 className="text-sm font-semibold text-gray-900 mb-3">Bill Details</h3>
             <div className="flex flex-col gap-2 bg-gray-50 rounded-xl p-4">
               {state.cart.map((item, idx) => (
                 <div key={idx} className="flex justify-between text-sm">
                   <span className="text-gray-600">
-                    {item.quantity}x {item.menuItem.name}
+                    {item.quantity}× {item.menuItem.name}
                   </span>
                   <span className="text-gray-900">
                     {formatPrice(item.menuItem.price * item.quantity)}
                   </span>
                 </div>
               ))}
+
               <div className="border-t border-gray-200 my-1" />
+
               <div className="flex justify-between text-sm">
-                <span className="text-gray-500">Subtotal</span>
+                <span className="text-gray-500">Item total</span>
                 <span className="text-gray-900">{formatPrice(subtotal)}</span>
               </div>
-              <div className="flex justify-between text-sm">
-                <span className="text-gray-500">Delivery</span>
-                <span className="text-gray-900">
-                  {deliveryFee === 0 ? 'Free' : formatPrice(deliveryFee)}
-                </span>
-              </div>
+
               {discount > 0 && (
                 <div className="flex justify-between text-sm">
-                  <span className="text-green-600">Discount</span>
-                  <span className="text-green-600">-{formatPrice(discount)}</span>
+                  <span className="text-green-600">Discount (20% off)</span>
+                  <span className="text-green-600">- {formatPrice(discount)}</span>
                 </div>
               )}
+
               <div className="flex justify-between text-sm">
-                <span className="text-gray-500">Tax</span>
+                <span className="text-gray-500">Delivery fee</span>
+                <span className={deliveryFee === 0 ? 'text-green-600 font-medium' : 'text-gray-900'}>
+                  {deliveryFee === 0 ? 'FREE' : formatPrice(deliveryFee)}
+                </span>
+              </div>
+
+              <div className="flex justify-between text-sm">
+                <span className="text-gray-500">Platform fee</span>
+                <span className="text-gray-900">{formatPrice(PLATFORM_FEE_USD)}</span>
+              </div>
+
+              <div className="flex justify-between text-sm">
+                <span className="text-gray-500">
+                  GST &amp; restaurant charges
+                </span>
                 <span className="text-gray-900">{formatPrice(tax)}</span>
               </div>
+
               <div className="border-t border-gray-200 my-1" />
+
               <div className="flex justify-between text-base font-bold">
-                <span>Total</span>
+                <span>To Pay</span>
                 <span>{formatPrice(total)}</span>
               </div>
+
+              {discount > 0 && (
+                <div className="flex justify-between text-xs font-medium text-green-600 bg-green-50 rounded-lg px-3 py-2 mt-1">
+                  <span>Your total savings</span>
+                  <span>{formatPrice(discount)}</span>
+                </div>
+              )}
             </div>
           </div>
 
@@ -219,7 +243,7 @@ export function CheckoutSheet() {
           </div>
         </div>
 
-        {/* Start Simulation Button */}
+        {/* Place Order */}
         <div className="shrink-0 p-4 border-t border-gray-100 bg-white">
           <button
             onClick={handleStartSimulation}
@@ -231,7 +255,7 @@ export function CheckoutSheet() {
             ) : (
               <>
                 <span className="text-sm font-semibold">Place Order</span>
-                <span className="text-xs text-white/60">\u2014 {formatPrice(total)}</span>
+                <span className="text-xs text-white/60">— {formatPrice(total)}</span>
               </>
             )}
           </button>
