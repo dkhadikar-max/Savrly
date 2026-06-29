@@ -82,6 +82,7 @@ export interface UserStats {
   ordersCancelled: number;
   totalDelays: number;
   weeklyProgress: number[];
+  weekStartDate?: string;
   achievements: Achievement[];
   savingsGoalLevel?: number; // 1-4
 }

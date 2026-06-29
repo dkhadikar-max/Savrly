@@ -6,7 +6,16 @@ import type { LocaleConfig } from '@/lib/locale';
 
 const STORAGE_KEY = 'savrly_v1';
 
-type PersistedSlice = Pick<AppState, 'favorites' | 'orders' | 'userStats' | 'addresses' | 'onboardingDone'>;
+type PersistedSlice = Pick<AppState, 'favorites' | 'orders' | 'userStats' | 'addresses' | 'onboardingDone' | 'userCity'>;
+
+function weekMondayISO(): string {
+  const now = new Date();
+  const day = now.getDay(); // 0=Sun
+  const diff = day === 0 ? -6 : 1 - day;
+  const mon = new Date(now);
+  mon.setDate(now.getDate() + diff);
+  return mon.toISOString().split('T')[0];
+}
 
 function loadPersisted(): Partial<PersistedSlice> {
   try {
@@ -18,8 +27,20 @@ function loadPersisted(): Partial<PersistedSlice> {
     if (Array.isArray(parsed.favorites)) safe.favorites = parsed.favorites;
     if (Array.isArray(parsed.orders)) safe.orders = parsed.orders;
     if (Array.isArray(parsed.addresses)) safe.addresses = parsed.addresses;
-    if (parsed.userStats && typeof parsed.userStats === 'object') safe.userStats = parsed.userStats as AppState['userStats'];
+    if (parsed.userStats && typeof parsed.userStats === 'object') {
+      safe.userStats = parsed.userStats as AppState['userStats'];
+      // Reset weekly progress when a new week has started
+      const monday = weekMondayISO();
+      if (!safe.userStats.weekStartDate || safe.userStats.weekStartDate !== monday) {
+        safe.userStats = {
+          ...safe.userStats,
+          weeklyProgress: [0, 0, 0, 0, 0, 0, 0],
+          weekStartDate: monday,
+        };
+      }
+    }
     if (typeof parsed.onboardingDone === 'boolean') safe.onboardingDone = parsed.onboardingDone;
+    if (typeof parsed.userCity === 'string') safe.userCity = parsed.userCity;
     return safe;
   } catch {
     return {};
@@ -34,6 +55,7 @@ function savePersisted(state: AppState): void {
       userStats: state.userStats,
       addresses: state.addresses,
       onboardingDone: state.onboardingDone,
+      userCity: state.userCity,
     };
     localStorage.setItem(STORAGE_KEY, JSON.stringify(slice));
   } catch {
@@ -59,7 +81,7 @@ const baseState: AppState = {
   favorites: [],
   orders: pastOrders,
   addresses: addresses,
-  userStats: initialUserStats,
+  userStats: { ...initialUserStats, weekStartDate: weekMondayISO() },
   searchQuery: '',
   showProductSheet: false,
   showCartSheet: false,
@@ -237,7 +259,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   // Persist user data across page refreshes
   useEffect(() => {
     savePersisted(state);
-  }, [state.favorites, state.orders, state.userStats, state.addresses, state.onboardingDone]);
+  }, [state.favorites, state.orders, state.userStats, state.addresses, state.onboardingDone, state.userCity]);
 
   const navigate = useCallback(
     (screen: ScreenName, opts?: { restaurantId?: string; menuItemId?: string }) => {
