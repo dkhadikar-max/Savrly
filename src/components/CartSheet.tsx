@@ -18,7 +18,8 @@ export function CartSheet() {
   const { formatPrice, locale } = useLocale();
   const taxRate = locale.countryCode === 'IN' ? 0.05 : 0.08;
   const tax = subtotal * taxRate;
-  const total = subtotal + deliveryFee + tax;
+  const PLATFORM_FEE_USD = 0.2;
+  const total = subtotal + deliveryFee + PLATFORM_FEE_USD + tax;
 
   const handleClose = () => dispatch({ type: 'TOGGLE_CART_SHEET', show: false });
 
@@ -134,7 +135,13 @@ export function CartSheet() {
                     </span>
                   </div>
                   <div className="flex justify-between text-sm">
-                    <span className="text-gray-500">GST &amp; charges</span>
+                    <span className="text-gray-500">Platform fee</span>
+                    <span className="text-gray-900">{formatPrice(PLATFORM_FEE_USD)}</span>
+                  </div>
+                  <div className="flex justify-between text-sm">
+                    <span className="text-gray-500">
+                      {locale.countryCode === 'IN' ? 'GST & charges' : 'Tax & charges'}
+                    </span>
                     <span className="text-gray-900">{formatPrice(tax)}</span>
                   </div>
                   <div className="flex justify-between text-base font-bold pt-2 border-t border-gray-100">
