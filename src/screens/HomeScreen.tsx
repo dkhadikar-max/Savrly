@@ -24,9 +24,9 @@ function cityMatches(restaurantCity: string, userCity: string | null): boolean {
   const r = restaurantCity.toLowerCase().trim();
   const u = userCity.toLowerCase().trim();
   if (r === u) return true;
-  // prefix match handles e.g. "Mumbai" matching "Mumbai Suburban"
-  if (u.startsWith(r) || r.startsWith(u)) return true;
-  return (CITY_ALIASES[r] ?? []).some((alias) => u.startsWith(alias) || alias.startsWith(u));
+  // substring match handles "Navi Mumbai"→"mumbai", "Greater Delhi"→"delhi", etc.
+  if (u.includes(r) || r.includes(u)) return true;
+  return (CITY_ALIASES[r] ?? []).some((alias) => u.includes(alias) || alias.includes(u));
 }
 
 const iconMap: Record<string, typeof Pizza> = {
@@ -119,7 +119,8 @@ export function HomeScreen() {
         (r) => r.country === 'IN' && (!r.city || r.city === 'all' || cityMatches(r.city, userCity))
       )
     : restaurants.filter((r) => !r.country)
-  ).map((r) => (hasCoords && isIndia ? applyLiveDistance(r, userLat!, userLng!) : r));
+  ).map((r) => (hasCoords && isIndia ? applyLiveDistance(r, userLat!, userLng!) : r))
+   .filter((r) => !hasCoords || parseDistance(r.distance) <= 30);
 
   const visibleRestaurants = state.discoveredRestaurants ?? staticVisible;
 

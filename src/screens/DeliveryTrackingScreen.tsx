@@ -14,11 +14,22 @@ const STEPS = [
   { label: 'Delivered',              detail: 'Your order has arrived — enjoy!',           duration: 1000 },
 ];
 
+const SIM_TOTAL_MS = STEPS.reduce((s, x) => s + x.duration, 0);
+
+function parseDeliveryMinutes(deliveryTime?: string): number {
+  if (!deliveryTime) return 35;
+  const m = deliveryTime.match(/(\d+)[^\d]+(\d+)/);
+  if (m) return Math.round((parseInt(m[1]) + parseInt(m[2])) / 2);
+  const s = deliveryTime.match(/(\d+)/);
+  return s ? parseInt(s[1]) : 35;
+}
+
 export function DeliveryTrackingScreen() {
-  const { navigate, dispatch } = useApp();
+  const { navigate, dispatch, state } = useApp();
+  const initialEta = parseDeliveryMinutes(state.orders[0]?.deliveryTime);
   const [currentStep, setCurrentStep] = useState(0);
   const [progress, setProgress] = useState(0);
-  const [eta, setEta] = useState(35);
+  const [eta, setEta] = useState(initialEta);
   const [showComplete, setShowComplete] = useState(false);
   const [showToast, setShowToast] = useState(false);
   const timerRef = useRef<ReturnType<typeof setTimeout>>(undefined);
@@ -48,6 +59,7 @@ export function DeliveryTrackingScreen() {
   }, [currentStep]);
 
   useEffect(() => {
+    const tickMs = SIM_TOTAL_MS / initialEta;
     etaRef.current = setInterval(() => {
       setEta((e) => {
         if (e <= 1) {
@@ -56,11 +68,11 @@ export function DeliveryTrackingScreen() {
         }
         return e - 1;
       });
-    }, (STEPS.reduce((s, x) => s + x.duration, 0) / 35));
+    }, tickMs);
     return () => {
       if (etaRef.current) clearInterval(etaRef.current);
     };
-  }, []);
+  }, [initialEta]);
 
   const handleDone = () => {
     dispatch({ type: 'SHOW_INTERVENTION', show: true });

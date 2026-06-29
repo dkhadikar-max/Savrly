@@ -48,6 +48,7 @@ export function CheckoutSheet() {
           total,
           date: new Date().toISOString().split('T')[0],
           status: 'preparing',
+          deliveryTime: cartRestaurant?.deliveryTime,
         },
       });
       dispatch({ type: 'TOGGLE_CHECKOUT_SHEET', show: false });

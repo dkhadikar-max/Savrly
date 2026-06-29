@@ -71,6 +71,7 @@ export interface Order {
   total: number;
   date: string;
   status: 'delivered' | 'cancelled' | 'preparing';
+  deliveryTime?: string;
 }
 
 export interface UserStats {
