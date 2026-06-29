@@ -10,7 +10,8 @@ export function RestaurantDetailScreen() {
   const [, setHeaderCollapsed] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
 
-  const restaurant = restaurants.find((r) => r.id === state.selectedRestaurantId);
+  const allRestaurants = [...restaurants, ...(state.discoveredRestaurants ?? [])];
+  const restaurant = allRestaurants.find((r) => r.id === state.selectedRestaurantId);
 
   useEffect(() => {
     const el = scrollRef.current;

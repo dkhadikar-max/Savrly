@@ -51,7 +51,8 @@ export function OrdersScreen() {
                   <button
                     className="flex items-center gap-1 text-xs font-medium text-gray-600 bg-white px-3 py-1.5 rounded-full active:bg-gray-100"
                     onClick={() => {
-                      const r = restaurants.find((x) => x.name === order.restaurantName);
+                      const allRestaurants = [...restaurants, ...(state.discoveredRestaurants ?? [])];
+                      const r = allRestaurants.find((x) => x.name === order.restaurantName);
                       if (r) navigate('restaurantDetail', { restaurantId: r.id });
                     }}
                   >

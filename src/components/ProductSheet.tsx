@@ -13,7 +13,8 @@ export function ProductSheet() {
     return null;
   }
 
-  const restaurant = restaurants.find((r) => r.id === state.selectedRestaurantId);
+  const allRestaurants = [...restaurants, ...(state.discoveredRestaurants ?? [])];
+  const restaurant = allRestaurants.find((r) => r.id === state.selectedRestaurantId);
   const item = restaurant?.menuItems.find((m) => m.id === state.selectedMenuItemId);
 
   if (!item) return null;

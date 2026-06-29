@@ -16,8 +16,9 @@ export function CheckoutSheet() {
 
   if (!state.showCheckoutSheet) return null;
 
+  const allRestaurants = [...restaurants, ...(state.discoveredRestaurants ?? [])];
   const cartRestaurant = state.cart.length > 0
-    ? restaurants.find((r) => r.menuItems.some((m) => m.id === state.cart[0].menuItem.id))
+    ? allRestaurants.find((r) => r.menuItems.some((m) => m.id === state.cart[0].menuItem.id))
     : null;
 
   const subtotal = state.cart.reduce((sum, item) => sum + item.menuItem.price * item.quantity, 0);

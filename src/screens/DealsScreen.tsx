@@ -1,7 +1,6 @@
 import { Copy, Check } from 'lucide-react';
 import { useState } from 'react';
-import { offers } from '@/data';
-import { restaurants } from '@/data';
+import { offers, restaurants } from '@/data';
 import { Star, Clock } from 'lucide-react';
 import { useApp } from '@/store/AppContext';
 

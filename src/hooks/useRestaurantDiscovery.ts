@@ -105,7 +105,7 @@ export function useRestaurantDiscovery(): { loading: boolean } {
           const rating = parseFloat((4.0 + (h1 % 10) / 10).toFixed(1));
           const reviewCount = 80 + (h2 % 3920);
 
-          const baseMin = 15 + Math.round(distKm * 3);
+          const baseMin = 15 + Math.round(distKm * 4);
           const deliveryTime = `${baseMin}–${baseMin + 10} min`;
           const deliveryFee = distKm < 1 ? 0 : parseFloat((distKm * 0.2).toFixed(2));
 

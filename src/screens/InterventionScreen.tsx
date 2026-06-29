@@ -1,9 +1,11 @@
 import { useState } from 'react';
 import { Clock, DollarSign, Flame, TrendingUp, Award, ChevronRight, RotateCcw, Search } from 'lucide-react';
 import { useApp } from '@/store/AppContext';
+import { useLocale } from '@/hooks/useLocale';
 
 export function InterventionScreen() {
   const { state, navigate, dispatch } = useApp();
+  const { formatPrice } = useLocale();
   const [step, setStep] = useState<'waited' | 'question' | 'stats' | 'exit'>('waited');
   const [, setAnsweredNo] = useState(false);
 
@@ -129,7 +131,7 @@ export function InterventionScreen() {
             </div>
             <h2 className="text-2xl font-bold">Craving Resisted!</h2>
             <p className="text-white/60 text-sm mt-2">
-              You waited {state.userStats.totalDelays + 1} times. Here is your impact:
+              You waited {state.userStats.totalDelays} times. Here is your impact:
             </p>
           </div>
 
@@ -139,25 +141,25 @@ export function InterventionScreen() {
               <StatCard
                 icon={DollarSign}
                 label="Money Saved"
-                value={`$${state.userStats.moneySaved.toFixed(2)}`}
+                value={formatPrice(state.userStats.moneySaved)}
                 color="green"
               />
               <StatCard
                 icon={Flame}
                 label="Current Streak"
-                value={`${state.userStats.currentStreak + 1} days`}
+                value={`${state.userStats.currentStreak} days`}
                 color="orange"
               />
               <StatCard
                 icon={TrendingUp}
                 label="Cravings Resisted"
-                value={`${state.userStats.cravingsResisted + 1}`}
+                value={`${state.userStats.cravingsResisted}`}
                 color="blue"
               />
               <StatCard
                 icon={Clock}
                 label="Time Delayed"
-                value={`${state.userStats.totalDelays + 1}x`}
+                value={`${state.userStats.totalDelays}x`}
                 color="purple"
               />
             </div>

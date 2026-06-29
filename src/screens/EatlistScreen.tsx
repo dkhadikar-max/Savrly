@@ -4,7 +4,8 @@ import { restaurants } from '@/data';
 
 export function EatlistScreen() {
   const { state, navigate, dispatch } = useApp();
-  const favRestaurants = restaurants.filter((r) => state.favorites.includes(r.id));
+  const allRestaurants = [...restaurants, ...(state.discoveredRestaurants ?? [])];
+  const favRestaurants = allRestaurants.filter((r) => state.favorites.includes(r.id));
 
   return (
     <div className="flex flex-col h-full bg-white">
