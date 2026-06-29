@@ -8,8 +8,8 @@ export function SplashScreen({ onDone }: Props) {
   const [fading, setFading] = useState(false);
 
   useEffect(() => {
-    const fadeTimer = setTimeout(() => setFading(true), 1400);
-    const doneTimer = setTimeout(() => onDone(), 1800);
+    const fadeTimer = setTimeout(() => setFading(true), 2200);
+    const doneTimer = setTimeout(() => onDone(), 2700);
     return () => {
       clearTimeout(fadeTimer);
       clearTimeout(doneTimer);
@@ -18,7 +18,7 @@ export function SplashScreen({ onDone }: Props) {
 
   return (
     <div
-      className={`absolute inset-0 z-[100] bg-neutral-900 flex items-center justify-center transition-opacity duration-400 ${
+      className={`absolute inset-0 z-[100] bg-neutral-900 flex items-center justify-center transition-opacity duration-500 ${
         fading ? 'opacity-0' : 'opacity-100'
       }`}
     >
