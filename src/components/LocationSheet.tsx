@@ -28,6 +28,8 @@ export function LocationSheet() {
           if (data.countryCode) {
             dispatch({ type: 'SET_LOCALE', locale: getLocale(data.countryCode) });
           }
+          const city = data.city || data.locality || data.principalSubdivision || '';
+          if (city) dispatch({ type: 'SET_CITY', city });
         } catch {
           // keep timezone-detected locale
         }

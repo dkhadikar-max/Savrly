@@ -9,9 +9,11 @@ import {
   Zap,
 } from 'lucide-react';
 import { useApp } from '@/store/AppContext';
+import { useLocale } from '@/hooks/useLocale';
 
 export function DashboardScreen() {
   const { state, goBack } = useApp();
+  const { formatPrice } = useLocale();
   const stats = state.userStats;
 
   const weeklyData = stats.weeklyProgress;
@@ -36,7 +38,7 @@ export function DashboardScreen() {
             <SummaryCard
               icon={DollarSign}
               label="Money Saved"
-              value={`$${stats.moneySaved.toFixed(2)}`}
+              value={formatPrice(stats.moneySaved)}
               subtitle="Since you started"
               color="green"
             />
@@ -153,7 +155,7 @@ export function DashboardScreen() {
               </div>
               <div className="bg-white rounded-xl p-3">
                 <p className="text-xs text-gray-500">This Month Saved</p>
-                <p className="text-xl font-bold text-green-600">$86.50</p>
+                <p className="text-xl font-bold text-green-600">{formatPrice(86.50)}</p>
                 <p className="text-[10px] text-gray-400 mt-0.5">8 cravings resisted</p>
               </div>
               <div className="bg-white rounded-xl p-3">

@@ -32,6 +32,7 @@ const initialState: AppState = {
   scrollY: 0,
   locationPermission: 'idle',
   userLocation: null,
+  userCity: null,
   locale: getLocaleFromTimezone(),
 };
 
@@ -54,7 +55,8 @@ type Action =
   | { type: 'UPDATE_STATS'; stats: Partial<import('@/types').UserStats> }
   | { type: 'SET_SCROLL_Y'; y: number }
   | { type: 'SET_LOCATION'; permission: AppState['locationPermission']; lat?: number; lng?: number }
-  | { type: 'SET_LOCALE'; locale: LocaleConfig };
+  | { type: 'SET_LOCALE'; locale: LocaleConfig }
+  | { type: 'SET_CITY'; city: string };
 
 function appReducer(state: AppState, action: Action): AppState {
   switch (action.type) {
@@ -154,6 +156,8 @@ function appReducer(state: AppState, action: Action): AppState {
       };
     case 'SET_LOCALE':
       return { ...state, locale: action.locale };
+    case 'SET_CITY':
+      return { ...state, userCity: action.city };
     default:
       return state;
   }

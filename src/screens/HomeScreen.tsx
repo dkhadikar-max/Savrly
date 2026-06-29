@@ -36,9 +36,17 @@ export function HomeScreen() {
 
   const { locale, formatPrice, formatDistance } = useLocale();
   const countryCode = locale.countryCode;
+  const userCity = state.userCity;
+
+  const isIndia = countryCode === 'IN';
+
+  const visibleRestaurants = isIndia
+    ? restaurants.filter((r) => r.country === 'IN')
+    : restaurants.filter((r) => !r.country);
 
   const nearbyRestaurants = locationGranted
-    ? [...restaurants]
+    ? [...visibleRestaurants]
+        .filter((r) => !isIndia || !r.city || r.city === 'all' || r.city === userCity)
         .sort((a, b) => {
           const relevDiff = getCuisineRelevance(b.cuisine, countryCode) - getCuisineRelevance(a.cuisine, countryCode);
           if (relevDiff !== 0) return relevDiff;
@@ -192,7 +200,7 @@ export function HomeScreen() {
             </button>
           </div>
           <div className="grid grid-cols-2 gap-3">
-            {restaurants.filter((r) => r.popular).map((r) => (
+            {visibleRestaurants.filter((r) => r.popular).map((r) => (
               <RestaurantCard key={r.id} restaurant={r} />
             ))}
           </div>
@@ -207,7 +215,7 @@ export function HomeScreen() {
             </h2>
           </div>
           <div className="flex gap-3 overflow-x-auto no-scrollbar snap-x snap-mandatory pb-1">
-            {restaurants
+            {visibleRestaurants
               .filter((r) => parseInt(r.deliveryTime) <= 25)
               .map((r) => (
                 <div key={r.id} className="min-w-[280px] snap-start">
@@ -226,7 +234,7 @@ export function HomeScreen() {
             </h2>
           </div>
           <div className="grid grid-cols-2 gap-3">
-            {restaurants.slice(0, 4).map((r) => (
+            {visibleRestaurants.slice(0, 4).map((r) => (
               <RestaurantCard key={r.id} restaurant={r} />
             ))}
           </div>
@@ -236,7 +244,7 @@ export function HomeScreen() {
         <div className="px-4 pb-6">
           <h2 className="text-lg font-bold text-gray-900 mb-3">All Restaurants</h2>
           <div className="flex flex-col gap-3">
-            {restaurants.map((r) => (
+            {visibleRestaurants.map((r) => (
               <RestaurantCardWide key={r.id} restaurant={r} />
             ))}
           </div>

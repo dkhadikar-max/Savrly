@@ -48,6 +48,8 @@ export interface Restaurant {
   popular?: boolean;
   menuCategories: string[];
   menuItems: MenuItem[];
+  country?: string;
+  city?: string;
 }
 
 export interface Category {
@@ -110,6 +112,7 @@ export interface AppState {
   scrollY: number;
   locationPermission: 'idle' | 'requesting' | 'granted' | 'denied';
   userLocation: { lat: number; lng: number } | null;
+  userCity: string | null;
   locale: import('@/lib/locale').LocaleConfig | null;
 }
 

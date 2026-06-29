@@ -103,7 +103,7 @@ export function formatDistance(milesStr: string, locale: LocaleConfig): string {
 
 // Hyperlocal cuisine relevance — higher score = show first in country
 const CUISINE_PRIORITY: Record<string, string[]> = {
-  IN: ['biryani', 'south indian', 'indian', 'chinese', 'fast food', 'desserts', 'coffee'],
+  IN: ['biryani', 'south indian', 'mughlai', 'north indian', 'indian', 'momos', 'street food', 'chinese', 'fast food', 'desserts', 'coffee'],
   JP: ['japanese', 'sushi', 'asian', 'chinese', 'healthy'],
   GB: ['indian', 'chinese', 'italian', 'american', 'desserts', 'coffee'],
   AU: ['healthy', 'sushi', 'asian', 'italian', 'coffee', 'american'],
