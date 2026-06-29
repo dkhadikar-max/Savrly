@@ -32,7 +32,7 @@ export function OnboardingScreen() {
 
   if (step === 'welcome') {
     return (
-      <div className="absolute inset-0 z-[75] bg-white flex flex-col px-6 pt-12 pb-8">
+      <div className="absolute inset-0 z-[90] bg-white flex flex-col px-6 pt-12 pb-8">
         <div className="flex-1 flex flex-col items-center justify-center gap-8">
           <img
             src="/images/savrly-logo.png"
@@ -71,7 +71,7 @@ export function OnboardingScreen() {
 
   if (step === 'goal') {
     return (
-      <div className="absolute inset-0 z-[75] bg-white flex flex-col px-6 pt-12 pb-8">
+      <div className="absolute inset-0 z-[90] bg-white flex flex-col px-6 pt-12 pb-8">
         <div className="mb-8">
           <p className="text-xs font-medium text-gray-400 uppercase tracking-widest mb-2">Step 1 of 2</p>
           <h2 className="text-2xl font-bold text-gray-900">Set your goal</h2>
@@ -115,14 +115,14 @@ export function OnboardingScreen() {
 
   // login step
   return (
-    <div className="absolute inset-0 z-[75] bg-white flex flex-col px-6 pt-12 pb-8">
+    <div className="absolute inset-0 z-[90] bg-white flex flex-col px-6 pt-12 pb-8">
       <div className="mb-8">
         <p className="text-xs font-medium text-gray-400 uppercase tracking-widest mb-2">Step 2 of 2</p>
         <h2 className="text-2xl font-bold text-gray-900">Sign in</h2>
         <p className="text-gray-500 text-sm mt-1">Save your progress across devices</p>
       </div>
 
-      <div className="flex flex-col gap-3 flex-1">
+      <div className="flex flex-col gap-3 flex-1 overflow-y-auto no-scrollbar">
         <input
           type="email"
           placeholder="Email address"

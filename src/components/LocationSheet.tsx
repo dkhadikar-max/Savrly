@@ -7,7 +7,7 @@ export function LocationSheet() {
   const { state, dispatch } = useApp();
   const [loading, setLoading] = useState(false);
 
-  if (state.locationPermission !== 'idle') return null;
+  if (!state.onboardingDone || state.locationPermission !== 'idle') return null;
 
   const handleAllow = () => {
     if (!navigator.geolocation) {
