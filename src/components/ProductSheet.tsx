@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { X, Minus, Plus } from 'lucide-react';
+import { X, Minus, Plus, AlertTriangle } from 'lucide-react';
 import { useApp } from '@/store/AppContext';
 import { restaurants } from '@/data';
 import { useLocale } from '@/hooks/useLocale';
@@ -8,6 +8,7 @@ export function ProductSheet() {
   const { state, dispatch } = useApp();
   const [quantity, setQuantity] = useState(1);
   const [selectedChoices, setSelectedChoices] = useState<Record<string, string>>({});
+  const [showClearConfirm, setShowClearConfirm] = useState(false);
 
   if (!state.showProductSheet || !state.selectedRestaurantId || !state.selectedMenuItemId) {
     return null;
@@ -21,26 +22,42 @@ export function ProductSheet() {
 
   const { formatPrice } = useLocale();
 
+  // Detect if cart has items from a different restaurant
+  const cartRestaurant = state.cart.length > 0
+    ? allRestaurants.find((r) => r.menuItems.some((m) => m.id === state.cart[0].menuItem.id))
+    : null;
+  const differentRestaurant = cartRestaurant && cartRestaurant.id !== state.selectedRestaurantId;
+
   const handleClose = () => {
     dispatch({ type: 'TOGGLE_PRODUCT_SHEET', show: false });
     setQuantity(1);
     setSelectedChoices({});
+    setShowClearConfirm(false);
   };
 
-  const handleAdd = () => {
+  const doAdd = () => {
     const options = Object.entries(selectedChoices).map(([optionId, choiceId]) => ({
       optionId,
       choiceId,
     }));
     dispatch({
       type: 'ADD_TO_CART',
-      item: {
-        menuItem: item,
-        quantity,
-        selectedOptions: options,
-      },
+      item: { menuItem: item, quantity, selectedOptions: options },
     });
     handleClose();
+  };
+
+  const handleAdd = () => {
+    if (differentRestaurant) {
+      setShowClearConfirm(true);
+    } else {
+      doAdd();
+    }
+  };
+
+  const handleClearAndAdd = () => {
+    dispatch({ type: 'CLEAR_CART' });
+    doAdd();
   };
 
   const extraPrice = item.options
@@ -145,13 +162,38 @@ export function ProductSheet() {
 
         {/* Add Button */}
         <div className="shrink-0 p-4 border-t border-gray-100 bg-white">
-          <button
-            onClick={handleAdd}
-            className="w-full h-14 bg-gray-900 text-white rounded-full flex items-center justify-between px-6 active:scale-[0.97] transition-transform"
-          >
-            <span className="text-sm font-semibold">Add to order</span>
-            <span className="text-sm font-semibold">{formatPrice(totalPrice)}</span>
-          </button>
+          {showClearConfirm ? (
+            <div className="bg-orange-50 rounded-2xl p-4">
+              <div className="flex items-start gap-3 mb-3">
+                <AlertTriangle size={18} className="text-orange-500 shrink-0 mt-0.5" />
+                <p className="text-sm text-gray-700">
+                  Your cart has items from <span className="font-semibold">{cartRestaurant?.name}</span>. Start a new order from <span className="font-semibold">{restaurant.name}</span>?
+                </p>
+              </div>
+              <div className="flex gap-2">
+                <button
+                  onClick={() => setShowClearConfirm(false)}
+                  className="flex-1 h-11 border-2 border-gray-200 rounded-full text-sm font-medium text-gray-700 active:bg-gray-50"
+                >
+                  Keep current
+                </button>
+                <button
+                  onClick={handleClearAndAdd}
+                  className="flex-1 h-11 bg-gray-900 text-white rounded-full text-sm font-semibold active:scale-[0.97] transition-transform"
+                >
+                  Start new order
+                </button>
+              </div>
+            </div>
+          ) : (
+            <button
+              onClick={handleAdd}
+              className="w-full h-14 bg-gray-900 text-white rounded-full flex items-center justify-between px-6 active:scale-[0.97] transition-transform"
+            >
+              <span className="text-sm font-semibold">Add to order</span>
+              <span className="text-sm font-semibold">{formatPrice(totalPrice)}</span>
+            </button>
+          )}
         </div>
       </div>
     </div>
