@@ -101,7 +101,8 @@ type Action =
   | { type: 'SET_CITY'; city: string }
   | { type: 'SET_DISCOVERED_RESTAURANTS'; restaurants: import('@/types').Restaurant[] }
   | { type: 'SET_RESTAURANTS_LOADING'; loading: boolean }
-  | { type: 'SET_ONBOARDING_DONE' };
+  | { type: 'SET_ONBOARDING_DONE' }
+  | { type: 'UPDATE_ORDER_STATUS'; orderId: string; status: import('@/types').Order['status'] };
 
 function appReducer(state: AppState, action: Action): AppState {
   switch (action.type) {
@@ -209,6 +210,12 @@ function appReducer(state: AppState, action: Action): AppState {
       return { ...state, restaurantsLoading: action.loading };
     case 'SET_ONBOARDING_DONE':
       return { ...state, onboardingDone: true };
+    case 'UPDATE_ORDER_STATUS': {
+      const orders = state.orders.map((o) =>
+        o.id === action.orderId ? { ...o, status: action.status } : o
+      );
+      return { ...state, orders };
+    }
     default:
       return state;
   }

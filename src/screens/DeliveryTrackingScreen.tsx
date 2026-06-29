@@ -75,6 +75,9 @@ export function DeliveryTrackingScreen() {
   }, [initialEta]);
 
   const handleDone = () => {
+    if (state.orders[0]) {
+      dispatch({ type: 'UPDATE_ORDER_STATUS', orderId: state.orders[0].id, status: 'delivered' });
+    }
     dispatch({ type: 'SHOW_INTERVENTION', show: true });
     navigate('intervention');
   };

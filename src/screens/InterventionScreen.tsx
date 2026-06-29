@@ -2,6 +2,21 @@ import { useState } from 'react';
 import { Clock, DollarSign, Flame, TrendingUp, Award, ChevronRight, RotateCcw, Search } from 'lucide-react';
 import { useApp } from '@/store/AppContext';
 import { useLocale } from '@/hooks/useLocale';
+import type { Achievement, UserStats } from '@/types';
+
+function unlockAchievements(achievements: Achievement[], stats: UserStats): Achievement[] {
+  const today = new Date().toISOString().split('T')[0];
+  return achievements.map((ach) => {
+    if (ach.unlocked) return ach;
+    const should =
+      (ach.id === 'first-resist' && stats.cravingsResisted >= 1) ||
+      (ach.id === 'week-warrior' && stats.longestStreak >= 7) ||
+      (ach.id === 'money-saver' && stats.moneySaved >= 100) ||
+      (ach.id === 'month-master' && stats.longestStreak >= 30) ||
+      (ach.id === 'centurion' && stats.cravingsResisted >= 100);
+    return should ? { ...ach, unlocked: true, date: today } : ach;
+  });
+}
 
 export function InterventionScreen() {
   const { state, navigate, dispatch } = useApp();
@@ -15,6 +30,10 @@ export function InterventionScreen() {
 
   const handleYes = () => {
     setStep('exit');
+    dispatch({
+      type: 'UPDATE_STATS',
+      stats: { ordersCancelled: state.userStats.ordersCancelled + 1 },
+    });
   };
 
   const handleNo = () => {
@@ -28,17 +47,19 @@ export function InterventionScreen() {
     newWeekly[weekIdx] = 1;
     // Use the actual order total as money saved (the order they just resisted paying for)
     const savedAmount = state.orders[0]?.total ?? 28.5;
-    dispatch({
-      type: 'UPDATE_STATS',
-      stats: {
-        cravingsResisted: state.userStats.cravingsResisted + 1,
-        currentStreak: newStreak,
-        longestStreak: Math.max(state.userStats.longestStreak, newStreak),
-        moneySaved: state.userStats.moneySaved + savedAmount,
-        totalDelays: state.userStats.totalDelays + 1,
-        weeklyProgress: newWeekly,
-      },
-    });
+    const newStats: Partial<UserStats> = {
+      cravingsResisted: state.userStats.cravingsResisted + 1,
+      currentStreak: newStreak,
+      longestStreak: Math.max(state.userStats.longestStreak, newStreak),
+      moneySaved: state.userStats.moneySaved + savedAmount,
+      totalDelays: state.userStats.totalDelays + 1,
+      weeklyProgress: newWeekly,
+    };
+    newStats.achievements = unlockAchievements(
+      state.userStats.achievements,
+      { ...state.userStats, ...newStats } as UserStats
+    );
+    dispatch({ type: 'UPDATE_STATS', stats: newStats });
   };
 
   const handleReturnHome = () => {

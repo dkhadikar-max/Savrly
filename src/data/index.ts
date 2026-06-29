@@ -2202,7 +2202,7 @@ export const initialUserStats: UserStats = {
       unlocked: false,
     },
     {
-      id: ' centurion',
+      id: 'centurion',
       title: 'Craving Centurion',
       description: 'Resist 100 cravings',
       unlocked: false,
