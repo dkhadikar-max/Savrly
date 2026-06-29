@@ -146,22 +146,24 @@ export function DashboardScreen() {
                 <p className="text-xl font-bold text-gray-900">
                   {Math.round((stats.cravingsResisted / (stats.cravingsResisted + stats.ordersCancelled || 1)) * 100)}%
                 </p>
-                <p className="text-[10px] text-green-600 mt-0.5">+5% vs last month</p>
+                <p className="text-[10px] text-gray-400 mt-0.5">{stats.totalDelays} deliberate pauses</p>
               </div>
               <div className="bg-white rounded-xl p-3">
-                <p className="text-xs text-gray-500">Avg. Delay Time</p>
-                <p className="text-xl font-bold text-gray-900">18 min</p>
-                <p className="text-[10px] text-green-600 mt-0.5">-3 min vs last month</p>
+                <p className="text-xs text-gray-500">Longest Streak</p>
+                <p className="text-xl font-bold text-gray-900">{stats.longestStreak} days</p>
+                <p className="text-[10px] text-gray-400 mt-0.5">personal best</p>
               </div>
               <div className="bg-white rounded-xl p-3">
-                <p className="text-xs text-gray-500">This Month Saved</p>
-                <p className="text-xl font-bold text-green-600">{formatPrice(86.50)}</p>
-                <p className="text-[10px] text-gray-400 mt-0.5">8 cravings resisted</p>
+                <p className="text-xs text-gray-500">Total Saved</p>
+                <p className="text-xl font-bold text-green-600">{formatPrice(stats.moneySaved)}</p>
+                <p className="text-[10px] text-gray-400 mt-0.5">{stats.cravingsResisted} cravings resisted</p>
               </div>
               <div className="bg-white rounded-xl p-3">
-                <p className="text-xs text-gray-500">Active Days</p>
-                <p className="text-xl font-bold text-gray-900">23</p>
-                <p className="text-[10px] text-gray-400 mt-0.5">Out of 30 days</p>
+                <p className="text-xs text-gray-500">Active This Week</p>
+                <p className="text-xl font-bold text-gray-900">
+                  {weeklyData.filter((d) => d === 1).length}
+                </p>
+                <p className="text-[10px] text-gray-400 mt-0.5">out of 7 days</p>
               </div>
             </div>
           </div>

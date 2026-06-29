@@ -20,14 +20,23 @@ export function InterventionScreen() {
   const handleNo = () => {
     setAnsweredNo(true);
     setStep('stats');
-    // Update stats
+    const newStreak = state.userStats.currentStreak + 1;
+    // Mark today active in weekly progress (Mon=0 … Sun=6)
+    const dayIdx = new Date().getDay();
+    const weekIdx = dayIdx === 0 ? 6 : dayIdx - 1;
+    const newWeekly = [...state.userStats.weeklyProgress];
+    newWeekly[weekIdx] = 1;
+    // Use the actual order total as money saved (the order they just resisted paying for)
+    const savedAmount = state.orders[0]?.total ?? 28.5;
     dispatch({
       type: 'UPDATE_STATS',
       stats: {
         cravingsResisted: state.userStats.cravingsResisted + 1,
-        currentStreak: state.userStats.currentStreak + 1,
-        moneySaved: state.userStats.moneySaved + 28.5,
+        currentStreak: newStreak,
+        longestStreak: Math.max(state.userStats.longestStreak, newStreak),
+        moneySaved: state.userStats.moneySaved + savedAmount,
         totalDelays: state.userStats.totalDelays + 1,
+        weeklyProgress: newWeekly,
       },
     });
   };
