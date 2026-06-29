@@ -103,6 +103,7 @@ export function useRestaurantDiscovery(): { loading: boolean } {
           const h1 = hash32(el.id);
           const h2 = hash32(el.id + 1);
           const rating = parseFloat((4.0 + (h1 % 10) / 10).toFixed(1));
+          const popular = rating >= 4.7;
           const reviewCount = 80 + (h2 % 3920);
 
           const baseMin = 15 + Math.round(distKm * 4);
@@ -126,6 +127,7 @@ export function useRestaurantDiscovery(): { loading: boolean } {
             cuisine: cuisineDisplay || 'Restaurant',
             rating,
             reviewCount,
+            popular,
             deliveryTime,
             deliveryFee,
             distance: `${distMi.toFixed(1)} mi`,

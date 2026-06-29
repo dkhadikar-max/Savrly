@@ -1,4 +1,5 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, Component } from 'react';
+import type { ReactNode } from 'react';
 import { AppProvider, useApp } from '@/store/AppContext';
 import { HomeScreen } from '@/screens/HomeScreen';
 import { SearchScreen } from '@/screens/SearchScreen';
@@ -17,6 +18,28 @@ import { CheckoutSheet } from '@/components/CheckoutSheet';
 import { LocationSheet } from '@/components/LocationSheet';
 import { SplashScreen } from '@/components/SplashScreen';
 import { OnboardingScreen } from '@/screens/OnboardingScreen';
+
+class ErrorBoundary extends Component<{ children: ReactNode }, { hasError: boolean }> {
+  state = { hasError: false };
+  static getDerivedStateFromError() { return { hasError: true }; }
+  render() {
+    if (this.state.hasError) {
+      return (
+        <div className="flex flex-col items-center justify-center h-full bg-white px-8 text-center">
+          <p className="text-sm font-semibold text-gray-900 mb-1">Something went wrong</p>
+          <p className="text-xs text-gray-500 mb-6">Please restart the app</p>
+          <button
+            className="px-6 py-2 bg-gray-900 text-white text-sm font-medium rounded-full"
+            onClick={() => this.setState({ hasError: false })}
+          >
+            Try again
+          </button>
+        </div>
+      );
+    }
+    return this.props.children;
+  }
+}
 
 function ScreenRouter() {
   const { state } = useApp();
@@ -75,12 +98,14 @@ function App() {
   const handleSplashDone = useCallback(() => setSplashDone(true), []);
 
   return (
-    <AppProvider>
-      <div className="relative h-screen w-full bg-neutral-900 flex justify-center items-center p-0 md:p-4">
-        {!splashDone && <SplashScreen onDone={handleSplashDone} />}
-        <AppShell />
-      </div>
-    </AppProvider>
+    <ErrorBoundary>
+      <AppProvider>
+        <div className="relative h-screen w-full bg-neutral-900 flex justify-center items-center p-0 md:p-4">
+          {!splashDone && <SplashScreen onDone={handleSplashDone} />}
+          <AppShell />
+        </div>
+      </AppProvider>
+    </ErrorBoundary>
   );
 }
 
