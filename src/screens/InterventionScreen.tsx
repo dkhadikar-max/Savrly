@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Clock, DollarSign, Flame, TrendingUp, Award, ChevronRight, RotateCcw } from 'lucide-react';
+import { Clock, DollarSign, Flame, TrendingUp, Award, ChevronRight, RotateCcw, Search } from 'lucide-react';
 import { useApp } from '@/store/AppContext';
 
 export function InterventionScreen() {
@@ -42,9 +42,9 @@ export function InterventionScreen() {
     return (
       <div className="flex flex-col items-center justify-center h-full bg-black text-white animate-in fade-in duration-1000">
         <div className="text-center px-8">
-          <p className="text-white/60 text-sm mb-4">You waited.</p>
+          <p className="text-white/60 text-sm mb-4">Simulation complete.</p>
           <h1 className="text-4xl font-bold tracking-tight">
-            The delivery<br />is complete.
+            You waited<br />it out.
           </h1>
           <button
             onClick={handleFadeToQuestion}
@@ -73,13 +73,13 @@ export function InterventionScreen() {
               onClick={handleNo}
               className="w-full h-14 bg-gray-900 text-white rounded-full text-sm font-semibold active:scale-[0.97] transition-transform"
             >
-              No, the craving passed
+              No, the craving has passed
             </button>
             <button
               onClick={handleYes}
               className="w-full h-14 border-2 border-gray-200 text-gray-700 rounded-full text-sm font-medium active:bg-gray-50 transition-colors"
             >
-              Yes, I still want to eat
+              I still want to order elsewhere
             </button>
           </div>
         </div>
@@ -94,16 +94,25 @@ export function InterventionScreen() {
           <div className="w-20 h-20 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-6">
             <RotateCcw size={32} className="text-orange-500" />
           </div>
-          <h2 className="text-2xl font-bold text-gray-900 mb-2">That\'s okay</h2>
-          <p className="text-sm text-gray-500 mb-8 max-w-[280px] mx-auto">
-            You can exit the simulation now. There\'s no judgment here \u2014 awareness is the first step.
+          <h2 className="text-2xl font-bold text-gray-900 mb-2">That's okay</h2>
+          <p className="text-sm text-gray-500 mb-8 max-w-[280px] mx-auto leading-relaxed">
+            You took a moment to check in \u2014 that awareness counts. Browse other restaurants whenever you're ready.
           </p>
-          <button
-            onClick={handleReturnHome}
-            className="w-full max-w-[280px] h-14 bg-gray-900 text-white rounded-full text-sm font-semibold active:scale-[0.97] transition-transform"
-          >
-            Back to Home
-          </button>
+          <div className="flex flex-col gap-3 w-full max-w-[280px] mx-auto">
+            <button
+              onClick={() => { dispatch({ type: 'CLEAR_CART' }); navigate('search'); }}
+              className="w-full h-14 bg-gray-900 text-white rounded-full text-sm font-semibold flex items-center justify-center gap-2 active:scale-[0.97] transition-transform"
+            >
+              <Search size={16} />
+              Browse Restaurants
+            </button>
+            <button
+              onClick={handleReturnHome}
+              className="w-full h-12 border-2 border-gray-200 text-gray-600 rounded-full text-sm font-medium active:bg-gray-50 transition-colors"
+            >
+              Back to Home
+            </button>
+          </div>
         </div>
       </div>
     );
