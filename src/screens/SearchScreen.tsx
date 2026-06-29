@@ -4,8 +4,8 @@ import { useApp } from '@/store/AppContext';
 import { restaurants, popularSearches, trendingSearches } from '@/data';
 
 export function SearchScreen() {
-  const { navigate, goBack } = useApp();
-  const [query, setQuery] = useState('');
+  const { navigate, goBack, state, dispatch } = useApp();
+  const [query, setQuery] = useState(state.searchQuery || '');
   const [recentSearches, setRecentSearches] = useState([
     'Pizza',
     'Burger near me',
@@ -14,6 +14,7 @@ export function SearchScreen() {
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
+    if (state.searchQuery) dispatch({ type: 'SET_SEARCH', query: '' });
     setTimeout(() => inputRef.current?.focus(), 300);
   }, []);
 

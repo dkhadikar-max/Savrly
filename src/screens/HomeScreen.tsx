@@ -173,7 +173,10 @@ export function HomeScreen() {
               <Flame size={18} className="text-orange-500" />
               Featured
             </h2>
-            <button className="text-xs font-medium text-gray-500 flex items-center active:opacity-70">
+            <button
+              onClick={() => navigate('search')}
+              className="text-xs font-medium text-gray-500 flex items-center active:opacity-70"
+            >
               See all <ChevronRight size={14} />
             </button>
           </div>

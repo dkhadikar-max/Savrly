@@ -34,6 +34,17 @@ export function CheckoutSheet() {
   const handleStartSimulation = () => {
     setLoading(true);
     setTimeout(() => {
+      dispatch({
+        type: 'ADD_ORDER',
+        order: {
+          id: `ORD-${Date.now().toString().slice(-6)}`,
+          restaurantName: cartRestaurant?.name ?? 'Unknown Restaurant',
+          items: [...state.cart],
+          total,
+          date: new Date().toISOString().split('T')[0],
+          status: 'preparing',
+        },
+      });
       dispatch({ type: 'TOGGLE_CHECKOUT_SHEET', show: false });
       dispatch({ type: 'CLEAR_CART' });
       dispatch({ type: 'SET_DELIVERY_STEP', step: 0 });
