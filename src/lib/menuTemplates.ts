@@ -20,6 +20,19 @@ const KNOWN_CHAINS: Record<string, string> = {
   'saravanaa bhavan': 'saravana-bhavan',
   'paradise': 'paradise-restaurant',
   'biryani blues': 'biryani-blues',
+  // City-iconic chains
+  "karim's": 'karims-delhi',
+  'karims': 'karims-delhi',
+  'peter cat': 'peter-cat',
+  'arsalan': 'arsalan-kolkata',
+  'mavalli tiffin': 'mtr-bangalore',
+  'mtr': 'mtr-bangalore',
+  'meghana foods': 'meghana-bangalore',
+  'meghana': 'meghana-bangalore',
+  'murugan idli': 'murugan-idli-chennai',
+  'vaishali': 'vaishali-pune',
+  'britannia': 'britannia-mumbai',
+  'gordhan thal': 'gordhan-thal-ahmedabad',
 };
 
 type TemplateName =

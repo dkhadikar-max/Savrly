@@ -1,12 +1,13 @@
 import { useState, useRef, useEffect } from 'react';
 import { Search, X, Clock, TrendingUp, ArrowLeft, Star } from 'lucide-react';
 import { useApp } from '@/store/AppContext';
-import { restaurants, popularSearches, trendingSearches } from '@/data';
+import { restaurants as staticRestaurants, popularSearches, trendingSearches } from '@/data';
 import { useLocale } from '@/hooks/useLocale';
 
 export function SearchScreen() {
   const { navigate, goBack, state, dispatch } = useApp();
-  const { formatPrice } = useLocale();
+  const { formatPrice, locale } = useLocale();
+  const countryCode = locale?.countryCode;
   const [query, setQuery] = useState(state.searchQuery || '');
   const [recentSearches, setRecentSearches] = useState([
     'Pizza',
@@ -19,6 +20,20 @@ export function SearchScreen() {
     if (state.searchQuery) dispatch({ type: 'SET_SEARCH', query: '' });
     setTimeout(() => inputRef.current?.focus(), 300);
   }, []);
+
+  // Merge discovered restaurants with locale-filtered static restaurants
+  const visibleStaticRestaurants = countryCode === 'IN'
+    ? staticRestaurants.filter((r) => r.country === 'IN')
+    : staticRestaurants.filter((r) => !r.country);
+
+  const restaurants = state.discoveredRestaurants
+    ? [
+        ...state.discoveredRestaurants,
+        ...visibleStaticRestaurants.filter(
+          (s) => !state.discoveredRestaurants!.some((d) => d.name === s.name)
+        ),
+      ]
+    : visibleStaticRestaurants;
 
   const allItems = restaurants.flatMap((r) =>
     r.menuItems.map((item) => ({

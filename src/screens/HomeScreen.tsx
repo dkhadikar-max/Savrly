@@ -8,6 +8,27 @@ import { useRestaurantDiscovery } from '@/hooks/useRestaurantDiscovery';
 import { getCuisineRelevance } from '@/lib/locale';
 import { RestaurantSkeleton } from '@/components/RestaurantSkeleton';
 
+const CITY_ALIASES: Record<string, string[]> = {
+  'bangalore': ['bengaluru', 'bangaluru', 'bengalooru'],
+  'bengaluru': ['bangalore', 'bangaluru'],
+  'kolkata': ['calcutta'],
+  'calcutta': ['kolkata'],
+  'mumbai': ['bombay'],
+  'bombay': ['mumbai'],
+  'delhi': ['new delhi'],
+  'new delhi': ['delhi'],
+};
+
+function cityMatches(restaurantCity: string, userCity: string | null): boolean {
+  if (!userCity) return false;
+  const r = restaurantCity.toLowerCase().trim();
+  const u = userCity.toLowerCase().trim();
+  if (r === u) return true;
+  // prefix match handles e.g. "Mumbai" matching "Mumbai Suburban"
+  if (u.startsWith(r) || r.startsWith(u)) return true;
+  return (CITY_ALIASES[r] ?? []).some((alias) => u.startsWith(alias) || alias.startsWith(u));
+}
+
 const iconMap: Record<string, typeof Pizza> = {
   pizza: Pizza,
   beef: Beef,
@@ -38,21 +59,23 @@ export function HomeScreen() {
   const locationGranted = state.locationPermission === 'granted';
   const locationRequesting = state.locationPermission === 'requesting';
 
-  const { locale, formatPrice, formatDistance } = useLocale();
+  const { locale } = useLocale();
   const countryCode = locale.countryCode;
   const userCity = state.userCity;
 
   const isIndia = countryCode === 'IN';
 
   const staticVisible = isIndia
-    ? restaurants.filter((r) => r.country === 'IN')
+    ? restaurants.filter(
+        (r) => r.country === 'IN' && (!r.city || r.city === 'all' || cityMatches(r.city, userCity))
+      )
     : restaurants.filter((r) => !r.country);
 
   const visibleRestaurants = state.discoveredRestaurants ?? staticVisible;
 
   const nearbyRestaurants = locationGranted
     ? [...(state.discoveredRestaurants ?? staticVisible)]
-        .filter((r) => !isIndia || !r.city || r.city === 'all' || r.city === userCity)
+        .filter((r) => !isIndia || !r.city || r.city === 'all' || cityMatches(r.city, userCity))
         .sort((a, b) => {
           const relevDiff = getCuisineRelevance(b.cuisine, countryCode) - getCuisineRelevance(a.cuisine, countryCode);
           if (relevDiff !== 0) return relevDiff;
