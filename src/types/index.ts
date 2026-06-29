@@ -114,6 +114,8 @@ export interface AppState {
   userLocation: { lat: number; lng: number } | null;
   userCity: string | null;
   locale: import('@/lib/locale').LocaleConfig | null;
+  discoveredRestaurants: Restaurant[] | null;
+  restaurantsLoading: boolean;
 }
 
 export type ScreenName =

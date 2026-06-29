@@ -34,6 +34,8 @@ const initialState: AppState = {
   userLocation: null,
   userCity: null,
   locale: getLocaleFromTimezone(),
+  discoveredRestaurants: null,
+  restaurantsLoading: false,
 };
 
 type Action =
@@ -56,7 +58,9 @@ type Action =
   | { type: 'SET_SCROLL_Y'; y: number }
   | { type: 'SET_LOCATION'; permission: AppState['locationPermission']; lat?: number; lng?: number }
   | { type: 'SET_LOCALE'; locale: LocaleConfig }
-  | { type: 'SET_CITY'; city: string };
+  | { type: 'SET_CITY'; city: string }
+  | { type: 'SET_DISCOVERED_RESTAURANTS'; restaurants: import('@/types').Restaurant[] }
+  | { type: 'SET_RESTAURANTS_LOADING'; loading: boolean };
 
 function appReducer(state: AppState, action: Action): AppState {
   switch (action.type) {
@@ -158,6 +162,10 @@ function appReducer(state: AppState, action: Action): AppState {
       return { ...state, locale: action.locale };
     case 'SET_CITY':
       return { ...state, userCity: action.city };
+    case 'SET_DISCOVERED_RESTAURANTS':
+      return { ...state, discoveredRestaurants: action.restaurants };
+    case 'SET_RESTAURANTS_LOADING':
+      return { ...state, restaurantsLoading: action.loading };
     default:
       return state;
   }

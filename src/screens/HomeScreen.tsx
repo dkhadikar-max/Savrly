@@ -4,7 +4,9 @@ import { useApp } from '@/store/AppContext';
 import { restaurants, categories, offers } from '@/data';
 import { Pizza, Beef, Cherry, Leaf, CakeSlice, Coffee, IceCreamCone, Sunrise, Moon, Zap as ZapIcon, Wheat, Fish, Salad } from 'lucide-react';
 import { useLocale } from '@/hooks/useLocale';
+import { useRestaurantDiscovery } from '@/hooks/useRestaurantDiscovery';
 import { getCuisineRelevance } from '@/lib/locale';
+import { RestaurantSkeleton } from '@/components/RestaurantSkeleton';
 
 const iconMap: Record<string, typeof Pizza> = {
   pizza: Pizza,
@@ -31,6 +33,8 @@ export function HomeScreen() {
   const [scrolled, setScrolled] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
 
+  const { loading: restaurantsLoading } = useRestaurantDiscovery();
+
   const locationGranted = state.locationPermission === 'granted';
   const locationRequesting = state.locationPermission === 'requesting';
 
@@ -40,12 +44,14 @@ export function HomeScreen() {
 
   const isIndia = countryCode === 'IN';
 
-  const visibleRestaurants = isIndia
+  const staticVisible = isIndia
     ? restaurants.filter((r) => r.country === 'IN')
     : restaurants.filter((r) => !r.country);
 
+  const visibleRestaurants = state.discoveredRestaurants ?? staticVisible;
+
   const nearbyRestaurants = locationGranted
-    ? [...visibleRestaurants]
+    ? [...(state.discoveredRestaurants ?? staticVisible)]
         .filter((r) => !isIndia || !r.city || r.city === 'all' || r.city === userCity)
         .sort((a, b) => {
           const relevDiff = getCuisineRelevance(b.cuisine, countryCode) - getCuisineRelevance(a.cuisine, countryCode);
@@ -78,6 +84,8 @@ export function HomeScreen() {
           <ChevronDown size={14} className="text-gray-500" />
           {locationRequesting ? (
             <span className="text-xs text-gray-400 ml-0.5 animate-pulse">Detecting location…</span>
+          ) : restaurantsLoading ? (
+            <span className="text-xs text-blue-500 ml-0.5 animate-pulse">Finding restaurants…</span>
           ) : locationGranted ? (
             <span className="text-xs text-green-600 ml-0.5 font-medium">Current Location</span>
           ) : (
@@ -166,8 +174,8 @@ export function HomeScreen() {
           </div>
         </div>
 
-        {/* Nearest to You — only when location granted */}
-        {locationGranted && (
+        {/* Nearest to You — shown while loading or after location granted */}
+        {(locationGranted || restaurantsLoading) && (
           <div className="px-4 pb-4">
             <div className="flex items-center justify-between mb-3">
               <h2 className="text-lg font-bold text-gray-900 flex items-center gap-1.5">
@@ -176,11 +184,13 @@ export function HomeScreen() {
               </h2>
             </div>
             <div className="flex gap-3 overflow-x-auto no-scrollbar snap-x snap-mandatory pb-1">
-              {nearbyRestaurants.map((r) => (
-                <div key={r.id} className="min-w-[280px] snap-start">
-                  <RestaurantCardWide restaurant={r} />
-                </div>
-              ))}
+              {restaurantsLoading
+                ? Array.from({ length: 4 }).map((_, i) => <RestaurantSkeleton key={i} />)
+                : nearbyRestaurants.map((r) => (
+                    <div key={r.id} className="min-w-[280px] snap-start">
+                      <RestaurantCardWide restaurant={r} />
+                    </div>
+                  ))}
             </div>
           </div>
         )}
