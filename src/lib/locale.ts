@@ -73,8 +73,17 @@ const TZ_COUNTRY: Record<string, string> = {
 export function getLocaleFromTimezone(): LocaleConfig {
   try {
     const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
-    const code = TZ_COUNTRY[tz] ?? 'US';
-    return getLocale(code);
+    if (TZ_COUNTRY[tz]) return getLocale(TZ_COUNTRY[tz]);
+    // Fallback: derive country from browser language tag (e.g. "en-IN" → "IN")
+    const langs: string[] = Array.from(
+      navigator.languages?.length ? navigator.languages : [navigator.language ?? '']
+    );
+    for (const lang of langs) {
+      const parts = lang.split('-');
+      const region = parts[parts.length - 1].toUpperCase();
+      if (LOCALES[region] || EU_COUNTRIES.has(region)) return getLocale(region);
+    }
+    return DEFAULT_LOCALE;
   } catch {
     return DEFAULT_LOCALE;
   }

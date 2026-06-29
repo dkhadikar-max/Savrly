@@ -49,6 +49,51 @@ function parseDistance(d: string) {
   return parseFloat(d.split(' ')[0]);
 }
 
+const CITY_CENTERS: Record<string, { lat: number; lng: number }> = {
+  delhi:     { lat: 28.6139, lng: 77.2090 },
+  mumbai:    { lat: 19.0760, lng: 72.8777 },
+  bangalore: { lat: 12.9716, lng: 77.5946 },
+  bengaluru: { lat: 12.9716, lng: 77.5946 },
+  chennai:   { lat: 13.0827, lng: 80.2707 },
+  hyderabad: { lat: 17.3850, lng: 78.4867 },
+  kolkata:   { lat: 22.5726, lng: 88.3639 },
+  pune:      { lat: 18.5204, lng: 73.8567 },
+  ahmedabad: { lat: 23.0225, lng: 72.5714 },
+};
+
+function haversineKm(lat1: number, lng1: number, lat2: number, lng2: number): number {
+  const R = 6371;
+  const toRad = (d: number) => (d * Math.PI) / 180;
+  const dLat = toRad(lat2 - lat1);
+  const dLng = toRad(lng2 - lng1);
+  const a =
+    Math.sin(dLat / 2) ** 2 +
+    Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.sin(dLng / 2) ** 2;
+  return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+}
+
+function applyLiveDistance(
+  r: import('@/types').Restaurant,
+  userLat: number,
+  userLng: number
+): import('@/types').Restaurant {
+  const cityKey = (r.city ?? 'all').toLowerCase();
+  // pan-India chains: place near user; city-specific: use city center
+  const center = cityKey !== 'all' ? (CITY_CENTERS[cityKey] ?? { lat: userLat, lng: userLng }) : { lat: userLat, lng: userLng };
+  // deterministic jitter per restaurant id (±~1 km)
+  const h = r.id.split('').reduce((a, c) => (((a * 31) >>> 0) + c.charCodeAt(0)) >>> 0, 0);
+  const latOff = ((h % 200) - 100) / 10000;
+  const lngOff = (((h >> 8) % 200) - 100) / 10000;
+  const distKm = haversineKm(userLat, userLng, center.lat + latOff, center.lng + lngOff);
+  const distMi = distKm / 1.609;
+  const baseMin = Math.max(15, 15 + Math.round(distKm * 4));
+  return {
+    ...r,
+    distance: `${distMi.toFixed(1)} mi`,
+    deliveryTime: `${baseMin}–${baseMin + 10} min`,
+  };
+}
+
 export function HomeScreen() {
   const { navigate, dispatch, state } = useApp();
   const [scrolled, setScrolled] = useState(false);
@@ -65,11 +110,16 @@ export function HomeScreen() {
 
   const isIndia = countryCode === 'IN';
 
-  const staticVisible = isIndia
+  const userLat = state.userLocation?.lat ?? null;
+  const userLng = state.userLocation?.lng ?? null;
+  const hasCoords = userLat !== null && userLng !== null;
+
+  const staticVisible = (isIndia
     ? restaurants.filter(
         (r) => r.country === 'IN' && (!r.city || r.city === 'all' || cityMatches(r.city, userCity))
       )
-    : restaurants.filter((r) => !r.country);
+    : restaurants.filter((r) => !r.country)
+  ).map((r) => (hasCoords && isIndia ? applyLiveDistance(r, userLat!, userLng!) : r));
 
   const visibleRestaurants = state.discoveredRestaurants ?? staticVisible;
 
