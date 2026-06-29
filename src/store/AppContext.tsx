@@ -1,8 +1,43 @@
-import React, { createContext, useContext, useReducer, useCallback } from 'react';
+import React, { createContext, useContext, useReducer, useCallback, useEffect } from 'react';
 import type { AppState, CartItem, ScreenName, TabName } from '@/types';
 import { initialUserStats, addresses, pastOrders } from '@/data';
 import { getLocaleFromTimezone } from '@/lib/locale';
 import type { LocaleConfig } from '@/lib/locale';
+
+const STORAGE_KEY = 'savrly_v1';
+
+type PersistedSlice = Pick<AppState, 'favorites' | 'orders' | 'userStats' | 'addresses'>;
+
+function loadPersisted(): Partial<PersistedSlice> {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return {};
+    const parsed: Partial<PersistedSlice> = JSON.parse(raw);
+    // Validate shape — only accept known keys with correct types
+    const safe: Partial<PersistedSlice> = {};
+    if (Array.isArray(parsed.favorites)) safe.favorites = parsed.favorites;
+    if (Array.isArray(parsed.orders)) safe.orders = parsed.orders;
+    if (Array.isArray(parsed.addresses)) safe.addresses = parsed.addresses;
+    if (parsed.userStats && typeof parsed.userStats === 'object') safe.userStats = parsed.userStats as AppState['userStats'];
+    return safe;
+  } catch {
+    return {};
+  }
+}
+
+function savePersisted(state: AppState): void {
+  try {
+    const slice: PersistedSlice = {
+      favorites: state.favorites,
+      orders: state.orders,
+      userStats: state.userStats,
+      addresses: state.addresses,
+    };
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(slice));
+  } catch {
+    // Storage quota exceeded or private browsing — fail silently
+  }
+}
 
 const tabRoots: Record<TabName, ScreenName> = {
   home: 'home',
@@ -12,7 +47,7 @@ const tabRoots: Record<TabName, ScreenName> = {
   profile: 'profile',
 };
 
-const initialState: AppState = {
+const baseState: AppState = {
   screen: 'home',
   prevScreen: null,
   activeTab: 'home',
@@ -37,6 +72,8 @@ const initialState: AppState = {
   discoveredRestaurants: null,
   restaurantsLoading: false,
 };
+
+const initialState: AppState = { ...baseState, ...loadPersisted() };
 
 type Action =
   | { type: 'NAVIGATE'; screen: ScreenName; restaurantId?: string; menuItemId?: string }
@@ -183,6 +220,11 @@ const AppContext = createContext<AppContextValue | null>(null);
 
 export function AppProvider({ children }: { children: React.ReactNode }) {
   const [state, dispatch] = useReducer(appReducer, initialState);
+
+  // Persist user data across page refreshes
+  useEffect(() => {
+    savePersisted(state);
+  }, [state.favorites, state.orders, state.userStats, state.addresses]);
 
   const navigate = useCallback(
     (screen: ScreenName, opts?: { restaurantId?: string; menuItemId?: string }) => {
