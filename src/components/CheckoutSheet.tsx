@@ -227,7 +227,7 @@ export function CheckoutSheet() {
             className="w-full h-14 bg-gray-900 text-white rounded-full flex items-center justify-center gap-2 active:scale-[0.97] transition-transform disabled:opacity-70"
           >
             {loading ? (
-              <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+              <img src="/images/savrly_logo_spinner.gif" alt="" className="w-6 h-6 object-contain" />
             ) : (
               <>
                 <span className="text-sm font-semibold">Place Order</span>

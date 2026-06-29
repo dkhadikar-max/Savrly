@@ -8,8 +8,9 @@ export function SplashScreen({ onDone }: Props) {
   const [fading, setFading] = useState(false);
 
   useEffect(() => {
-    const fadeTimer = setTimeout(() => setFading(true), 2200);
-    const doneTimer = setTimeout(() => onDone(), 2700);
+    // reveal GIF is ~2.7s; start fade just after it completes
+    const fadeTimer = setTimeout(() => setFading(true), 2800);
+    const doneTimer = setTimeout(() => onDone(), 3300);
     return () => {
       clearTimeout(fadeTimer);
       clearTimeout(doneTimer);
@@ -23,16 +24,11 @@ export function SplashScreen({ onDone }: Props) {
       }`}
       style={{ backgroundColor: '#0D0D0D' }}
     >
-      <div className="savrly-logo-float flex flex-col items-center gap-3">
-        <div className="savrly-logo rounded-2xl px-6 py-4" style={{ backgroundColor: '#1A1A1A' }}>
-          <span className="text-4xl font-bold tracking-tight" style={{ color: '#F97316' }}>
-            Savrly
-          </span>
-        </div>
-        <span className="text-xs tracking-widest uppercase" style={{ color: 'rgba(255,255,255,0.4)' }}>
-          Mindful Eating
-        </span>
-      </div>
+      <img
+        src="/images/savrly_logo_reveal.gif"
+        alt="Savrly"
+        className="w-64 h-64 object-contain"
+      />
     </div>
   );
 }

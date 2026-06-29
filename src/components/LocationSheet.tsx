@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { MapPin, Navigation } from 'lucide-react';
+import { Navigation } from 'lucide-react';
 import { useApp } from '@/store/AppContext';
 import { getLocale } from '@/lib/locale';
 
@@ -55,9 +55,7 @@ export function LocationSheet() {
 
         <div className="px-6 pt-2 pb-8">
           <div className="flex items-center justify-center mb-5">
-            <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center">
-              <MapPin size={28} className="text-gray-700" />
-            </div>
+            <img src="/images/savrly-logo.png" alt="Savrly" className="w-16 h-16 object-contain rounded-2xl" />
           </div>
 
           <h2 className="text-xl font-bold text-gray-900 text-center">Find food near you</h2>
@@ -72,7 +70,7 @@ export function LocationSheet() {
               className="w-full bg-gray-900 text-white rounded-full py-4 text-sm font-semibold flex items-center justify-center gap-2 active:scale-[0.97] transition-transform disabled:opacity-70"
             >
               {loading ? (
-                <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                <img src="/images/savrly_logo_spinner.gif" alt="" className="w-6 h-6 object-contain" />
               ) : (
                 <>
                   <Navigation size={16} />
