@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { X, MapPin, CreditCard, Tag, Check } from 'lucide-react';
 import { useApp } from '@/store/AppContext';
 import { restaurants, addresses } from '@/data';
+import { useLocale } from '@/hooks/useLocale';
 
 export function CheckoutSheet() {
   const { state, dispatch, navigate } = useApp();
@@ -22,6 +23,7 @@ export function CheckoutSheet() {
   const discount = promoApplied ? subtotal * 0.2 : 0;
   const tax = (subtotal - discount) * 0.08;
   const total = subtotal + deliveryFee + tax - discount;
+  const { formatPrice } = useLocale();
 
   const handleClose = () => dispatch({ type: 'TOGGLE_CHECKOUT_SHEET', show: false });
 
@@ -175,35 +177,35 @@ export function CheckoutSheet() {
                     {item.quantity}x {item.menuItem.name}
                   </span>
                   <span className="text-gray-900">
-                    ${(item.menuItem.price * item.quantity).toFixed(2)}
+                    {formatPrice(item.menuItem.price * item.quantity)}
                   </span>
                 </div>
               ))}
               <div className="border-t border-gray-200 my-1" />
               <div className="flex justify-between text-sm">
                 <span className="text-gray-500">Subtotal</span>
-                <span className="text-gray-900">${subtotal.toFixed(2)}</span>
+                <span className="text-gray-900">{formatPrice(subtotal)}</span>
               </div>
               <div className="flex justify-between text-sm">
                 <span className="text-gray-500">Delivery</span>
                 <span className="text-gray-900">
-                  {deliveryFee === 0 ? 'Free' : `$${deliveryFee.toFixed(2)}`}
+                  {deliveryFee === 0 ? 'Free' : formatPrice(deliveryFee)}
                 </span>
               </div>
               {discount > 0 && (
                 <div className="flex justify-between text-sm">
                   <span className="text-green-600">Discount</span>
-                  <span className="text-green-600">-${discount.toFixed(2)}</span>
+                  <span className="text-green-600">-{formatPrice(discount)}</span>
                 </div>
               )}
               <div className="flex justify-between text-sm">
                 <span className="text-gray-500">Tax</span>
-                <span className="text-gray-900">${tax.toFixed(2)}</span>
+                <span className="text-gray-900">{formatPrice(tax)}</span>
               </div>
               <div className="border-t border-gray-200 my-1" />
               <div className="flex justify-between text-base font-bold">
                 <span>Total</span>
-                <span>${total.toFixed(2)}</span>
+                <span>{formatPrice(total)}</span>
               </div>
             </div>
           </div>
@@ -229,7 +231,7 @@ export function CheckoutSheet() {
             ) : (
               <>
                 <span className="text-sm font-semibold">Place Order</span>
-                <span className="text-xs text-white/60">\u2014 ${total.toFixed(2)}</span>
+                <span className="text-xs text-white/60">\u2014 {formatPrice(total)}</span>
               </>
             )}
           </button>

@@ -3,6 +3,8 @@ import { Search, SlidersHorizontal, ChevronDown, Star, Clock, MapPin, ChevronRig
 import { useApp } from '@/store/AppContext';
 import { restaurants, categories, offers } from '@/data';
 import { Pizza, Beef, Cherry, Leaf, CakeSlice, Coffee, IceCreamCone, Sunrise, Moon, Zap as ZapIcon, Wheat, Fish, Salad } from 'lucide-react';
+import { useLocale } from '@/hooks/useLocale';
+import { getCuisineRelevance } from '@/lib/locale';
 
 const iconMap: Record<string, typeof Pizza> = {
   pizza: Pizza,
@@ -32,8 +34,17 @@ export function HomeScreen() {
   const locationGranted = state.locationPermission === 'granted';
   const locationRequesting = state.locationPermission === 'requesting';
 
+  const { locale, formatPrice, formatDistance } = useLocale();
+  const countryCode = locale.countryCode;
+
   const nearbyRestaurants = locationGranted
-    ? [...restaurants].sort((a, b) => parseDistance(a.distance) - parseDistance(b.distance)).slice(0, 4)
+    ? [...restaurants]
+        .sort((a, b) => {
+          const relevDiff = getCuisineRelevance(b.cuisine, countryCode) - getCuisineRelevance(a.cuisine, countryCode);
+          if (relevDiff !== 0) return relevDiff;
+          return parseDistance(a.distance) - parseDistance(b.distance);
+        })
+        .slice(0, 5)
     : [];
 
   useEffect(() => {
@@ -240,6 +251,7 @@ export function HomeScreen() {
 
 function RestaurantCard({ restaurant }: { restaurant: import('@/types').Restaurant }) {
   const { navigate } = useApp();
+  const { formatPrice } = useLocale();
 
   return (
     <button
@@ -271,9 +283,9 @@ function RestaurantCard({ restaurant }: { restaurant: import('@/types').Restaura
             <Clock size={10} className="text-gray-400" />
             <span className="text-[11px] text-gray-500">{restaurant.deliveryTime}</span>
           </div>
-          <span className="text-[11px] text-gray-400">\u00b7</span>
+          <span className="text-[11px] text-gray-400">&middot;</span>
           <span className="text-[11px] text-gray-500">
-            {restaurant.deliveryFee === 0 ? 'Free delivery' : `$${restaurant.deliveryFee.toFixed(2)}`}
+            {restaurant.deliveryFee === 0 ? 'Free delivery' : formatPrice(restaurant.deliveryFee)}
           </span>
         </div>
       </div>
@@ -283,6 +295,7 @@ function RestaurantCard({ restaurant }: { restaurant: import('@/types').Restaura
 
 function RestaurantCardWide({ restaurant }: { restaurant: import('@/types').Restaurant }) {
   const { navigate } = useApp();
+  const { formatPrice, formatDistance } = useLocale();
 
   return (
     <button
@@ -317,13 +330,13 @@ function RestaurantCardWide({ restaurant }: { restaurant: import('@/types').Rest
               <Clock size={11} className="text-gray-400" />
               <span className="text-xs text-gray-600">{restaurant.deliveryTime}</span>
             </div>
-            <span className="text-xs text-gray-300">\u00b7</span>
-            <span className="text-xs text-gray-600">{restaurant.distance}</span>
+            <span className="text-xs text-gray-300">&middot;</span>
+            <span className="text-xs text-gray-600">{formatDistance(restaurant.distance)}</span>
           </div>
           <p className="text-xs text-gray-500 mt-1">
             {restaurant.deliveryFee === 0
               ? 'Free delivery'
-              : `$${restaurant.deliveryFee.toFixed(2)} delivery`}
+              : `${formatPrice(restaurant.deliveryFee)} delivery`}
           </p>
         </div>
       </div>

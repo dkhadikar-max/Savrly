@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { X, Minus, Plus } from 'lucide-react';
 import { useApp } from '@/store/AppContext';
 import { restaurants } from '@/data';
+import { useLocale } from '@/hooks/useLocale';
 
 export function ProductSheet() {
   const { state, dispatch } = useApp();
@@ -16,6 +17,8 @@ export function ProductSheet() {
   const item = restaurant?.menuItems.find((m) => m.id === state.selectedMenuItemId);
 
   if (!item) return null;
+
+  const { formatPrice } = useLocale();
 
   const handleClose = () => {
     dispatch({ type: 'TOGGLE_PRODUCT_SHEET', show: false });
@@ -79,7 +82,7 @@ export function ProductSheet() {
         <div className="flex-1 overflow-y-auto no-scrollbar px-4">
           <h2 className="text-xl font-bold text-gray-900">{item.name}</h2>
           <p className="text-sm text-gray-500 mt-1">{item.description}</p>
-          <p className="text-lg font-bold text-gray-900 mt-2">${item.price.toFixed(2)}</p>
+          <p className="text-lg font-bold text-gray-900 mt-2">{formatPrice(item.price)}</p>
 
           {/* Customization Options */}
           {item.options?.map((option) => (
@@ -110,7 +113,7 @@ export function ProductSheet() {
                     </div>
                     <span className="flex-1 text-sm text-gray-700">{choice.name}</span>
                     {choice.price > 0 && (
-                      <span className="text-xs text-gray-500">+${choice.price.toFixed(2)}</span>
+                      <span className="text-xs text-gray-500">+{formatPrice(choice.price)}</span>
                     )}
                   </button>
                 ))}
@@ -146,7 +149,7 @@ export function ProductSheet() {
             className="w-full h-14 bg-gray-900 text-white rounded-full flex items-center justify-between px-6 active:scale-[0.97] transition-transform"
           >
             <span className="text-sm font-semibold">Add to order</span>
-            <span className="text-sm font-semibold">${totalPrice.toFixed(2)}</span>
+            <span className="text-sm font-semibold">{formatPrice(totalPrice)}</span>
           </button>
         </div>
       </div>

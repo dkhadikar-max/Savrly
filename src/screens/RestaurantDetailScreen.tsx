@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from 'react';
 import { ArrowLeft, Heart, Star, Clock, MapPin, ChevronRight, ShoppingBag } from 'lucide-react';
 import { useApp } from '@/store/AppContext';
 import { restaurants } from '@/data';
+import { useLocale } from '@/hooks/useLocale';
 
 export function RestaurantDetailScreen() {
   const { state, goBack, dispatch } = useApp();
@@ -29,6 +30,7 @@ export function RestaurantDetailScreen() {
 
   const cartCount = state.cart.reduce((sum, item) => sum + item.quantity, 0);
   const cartTotal = state.cart.reduce((sum, item) => sum + item.menuItem.price * item.quantity, 0);
+  const { formatPrice, formatDistance } = useLocale();
 
   const isFav = state.favorites.includes(restaurant.id);
 
@@ -87,14 +89,14 @@ export function RestaurantDetailScreen() {
             </div>
             <div className="flex items-center gap-1">
               <MapPin size={14} className="text-gray-400" />
-              <span className="text-sm text-gray-600">{restaurant.distance}</span>
+              <span className="text-sm text-gray-600">{formatDistance(restaurant.distance)}</span>
             </div>
           </div>
           <div className="mt-2">
             <span className="text-sm text-gray-600">
               {restaurant.deliveryFee === 0
                 ? 'Free delivery'
-                : `$${restaurant.deliveryFee.toFixed(2)} delivery fee`}
+                : `${formatPrice(restaurant.deliveryFee)} delivery fee`}
             </span>
           </div>
         </div>
@@ -151,7 +153,7 @@ export function RestaurantDetailScreen() {
                               {item.description}
                             </p>
                             <p className="text-sm font-semibold text-gray-900 mt-2">
-                              ${item.price.toFixed(2)}
+                              {formatPrice(item.price)}
                             </p>
                           </div>
                           <div className="relative w-20 h-20 shrink-0 rounded-xl overflow-hidden bg-gray-100">
@@ -189,7 +191,7 @@ export function RestaurantDetailScreen() {
               </span>
             </div>
             <div className="flex items-center gap-2">
-              <span className="text-sm font-semibold">${cartTotal.toFixed(2)}</span>
+              <span className="text-sm font-semibold">{formatPrice(cartTotal)}</span>
               <ChevronRight size={16} />
             </div>
           </button>

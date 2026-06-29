@@ -1,6 +1,8 @@
 import React, { createContext, useContext, useReducer, useCallback } from 'react';
 import type { AppState, CartItem, ScreenName, TabName } from '@/types';
 import { initialUserStats, addresses, pastOrders } from '@/data';
+import { getLocaleFromTimezone } from '@/lib/locale';
+import type { LocaleConfig } from '@/lib/locale';
 
 const tabRoots: Record<TabName, ScreenName> = {
   home: 'home',
@@ -30,6 +32,7 @@ const initialState: AppState = {
   scrollY: 0,
   locationPermission: 'idle',
   userLocation: null,
+  locale: getLocaleFromTimezone(),
 };
 
 type Action =
@@ -50,7 +53,8 @@ type Action =
   | { type: 'ADD_ORDER'; order: import('@/types').Order }
   | { type: 'UPDATE_STATS'; stats: Partial<import('@/types').UserStats> }
   | { type: 'SET_SCROLL_Y'; y: number }
-  | { type: 'SET_LOCATION'; permission: AppState['locationPermission']; lat?: number; lng?: number };
+  | { type: 'SET_LOCATION'; permission: AppState['locationPermission']; lat?: number; lng?: number }
+  | { type: 'SET_LOCALE'; locale: LocaleConfig };
 
 function appReducer(state: AppState, action: Action): AppState {
   switch (action.type) {
@@ -148,6 +152,8 @@ function appReducer(state: AppState, action: Action): AppState {
             ? { lat: action.lat, lng: action.lng }
             : state.userLocation,
       };
+    case 'SET_LOCALE':
+      return { ...state, locale: action.locale };
     default:
       return state;
   }

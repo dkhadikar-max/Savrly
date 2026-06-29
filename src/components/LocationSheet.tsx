@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { MapPin, Navigation } from 'lucide-react';
 import { useApp } from '@/store/AppContext';
+import { getLocale } from '@/lib/locale';
 
 export function LocationSheet() {
   const { state, dispatch } = useApp();
@@ -16,13 +17,20 @@ export function LocationSheet() {
     setLoading(true);
     dispatch({ type: 'SET_LOCATION', permission: 'requesting' });
     navigator.geolocation.getCurrentPosition(
-      (pos) => {
-        dispatch({
-          type: 'SET_LOCATION',
-          permission: 'granted',
-          lat: pos.coords.latitude,
-          lng: pos.coords.longitude,
-        });
+      async (pos) => {
+        const { latitude: lat, longitude: lng } = pos.coords;
+        dispatch({ type: 'SET_LOCATION', permission: 'granted', lat, lng });
+        try {
+          const res = await fetch(
+            `https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${lat}&longitude=${lng}&localityLanguage=en`
+          );
+          const data = await res.json();
+          if (data.countryCode) {
+            dispatch({ type: 'SET_LOCALE', locale: getLocale(data.countryCode) });
+          }
+        } catch {
+          // keep timezone-detected locale
+        }
       },
       () => {
         dispatch({ type: 'SET_LOCATION', permission: 'denied' });

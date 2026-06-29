@@ -110,6 +110,7 @@ export interface AppState {
   scrollY: number;
   locationPermission: 'idle' | 'requesting' | 'granted' | 'denied';
   userLocation: { lat: number; lng: number } | null;
+  locale: import('@/lib/locale').LocaleConfig | null;
 }
 
 export type ScreenName =

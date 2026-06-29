@@ -1,6 +1,7 @@
 import { X, Minus, Plus, ChevronRight } from 'lucide-react';
 import { useApp } from '@/store/AppContext';
 import { restaurants } from '@/data';
+import { useLocale } from '@/hooks/useLocale';
 
 export function CartSheet() {
   const { state, dispatch, navigate } = useApp();
@@ -15,6 +16,7 @@ export function CartSheet() {
   const deliveryFee = cartRestaurant?.deliveryFee ?? 0;
   const tax = subtotal * 0.08;
   const total = subtotal + deliveryFee + tax;
+  const { formatPrice } = useLocale();
 
   const handleClose = () => dispatch({ type: 'TOGGLE_CART_SHEET', show: false });
 
@@ -81,7 +83,7 @@ export function CartSheet() {
                       </p>
                     )}
                     <p className="text-sm font-semibold text-gray-900 mt-1">
-                      ${(item.menuItem.price * item.quantity).toFixed(2)}
+                      {formatPrice(item.menuItem.price * item.quantity)}
                     </p>
                   </div>
                   <div className="flex items-center gap-2 shrink-0">
@@ -121,21 +123,21 @@ export function CartSheet() {
                 <div className="flex flex-col gap-2">
                   <div className="flex justify-between text-sm">
                     <span className="text-gray-500">Subtotal</span>
-                    <span className="text-gray-900">${subtotal.toFixed(2)}</span>
+                    <span className="text-gray-900">{formatPrice(subtotal)}</span>
                   </div>
                   <div className="flex justify-between text-sm">
                     <span className="text-gray-500">Delivery fee</span>
                     <span className="text-gray-900">
-                      {deliveryFee === 0 ? 'Free' : `$${deliveryFee.toFixed(2)}`}
+                      {deliveryFee === 0 ? 'Free' : formatPrice(deliveryFee)}
                     </span>
                   </div>
                   <div className="flex justify-between text-sm">
                     <span className="text-gray-500">Taxes (8%)</span>
-                    <span className="text-gray-900">${tax.toFixed(2)}</span>
+                    <span className="text-gray-900">{formatPrice(tax)}</span>
                   </div>
                   <div className="flex justify-between text-base font-bold pt-2 border-t border-gray-100">
                     <span>Total</span>
-                    <span>${total.toFixed(2)}</span>
+                    <span>{formatPrice(total)}</span>
                   </div>
                 </div>
               </div>
@@ -149,7 +151,7 @@ export function CartSheet() {
               >
                 <span className="text-sm font-semibold">Checkout</span>
                 <div className="flex items-center gap-1">
-                  <span className="text-sm font-semibold">${total.toFixed(2)}</span>
+                  <span className="text-sm font-semibold">{formatPrice(total)}</span>
                   <ChevronRight size={16} />
                 </div>
               </button>
