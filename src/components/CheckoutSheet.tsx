@@ -217,7 +217,7 @@ export function CheckoutSheet() {
               <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
             ) : (
               <>
-                <span className="text-sm font-semibold">Start Simulation</span>
+                <span className="text-sm font-semibold">Place Order</span>
                 <span className="text-xs text-white/60">\u2014 ${total.toFixed(2)}</span>
               </>
             )}

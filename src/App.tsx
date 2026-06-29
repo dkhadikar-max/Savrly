@@ -13,6 +13,7 @@ import { BottomNav } from '@/components/BottomNav';
 import { CartSheet } from '@/components/CartSheet';
 import { ProductSheet } from '@/components/ProductSheet';
 import { CheckoutSheet } from '@/components/CheckoutSheet';
+import { LocationSheet } from '@/components/LocationSheet';
 
 function ScreenRouter() {
   const { state } = useApp();
@@ -56,6 +57,7 @@ function AppShell() {
           <ScreenRouter />
         </main>
 
+        <LocationSheet />
         <CartSheet />
         <ProductSheet />
         <CheckoutSheet />

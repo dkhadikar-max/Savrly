@@ -108,6 +108,8 @@ export interface AppState {
   deliveryStep: number;
   showIntervention: boolean;
   scrollY: number;
+  locationPermission: 'idle' | 'requesting' | 'granted' | 'denied';
+  userLocation: { lat: number; lng: number } | null;
 }
 
 export type ScreenName =

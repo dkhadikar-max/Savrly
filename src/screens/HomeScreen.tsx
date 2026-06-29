@@ -20,10 +20,21 @@ const iconMap: Record<string, typeof Pizza> = {
   fish: Fish,
 };
 
+function parseDistance(d: string) {
+  return parseFloat(d.split(' ')[0]);
+}
+
 export function HomeScreen() {
-  const { navigate, dispatch } = useApp();
+  const { navigate, dispatch, state } = useApp();
   const [scrolled, setScrolled] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
+
+  const locationGranted = state.locationPermission === 'granted';
+  const locationRequesting = state.locationPermission === 'requesting';
+
+  const nearbyRestaurants = locationGranted
+    ? [...restaurants].sort((a, b) => parseDistance(a.distance) - parseDistance(b.distance)).slice(0, 4)
+    : [];
 
   useEffect(() => {
     const el = scrollRef.current;
@@ -43,12 +54,18 @@ export function HomeScreen() {
       >
         {/* Delivery Address */}
         <button className="flex items-center gap-1 px-4 pt-3 pb-1 active:opacity-70">
-          <MapPin size={16} className="text-red-500" strokeWidth={2} />
+          <MapPin size={16} className={locationGranted ? 'text-green-500' : 'text-red-500'} strokeWidth={2} />
           <span className="text-sm font-medium text-gray-900">Deliver to</span>
           <ChevronDown size={14} className="text-gray-500" />
-          <span className="text-xs text-gray-500 ml-0.5 truncate max-w-[200px]">
-            742 Evergreen Terrace
-          </span>
+          {locationRequesting ? (
+            <span className="text-xs text-gray-400 ml-0.5 animate-pulse">Detecting location…</span>
+          ) : locationGranted ? (
+            <span className="text-xs text-green-600 ml-0.5 font-medium">Current Location</span>
+          ) : (
+            <span className="text-xs text-gray-500 ml-0.5 truncate max-w-[200px]">
+              742 Evergreen Terrace
+            </span>
+          )}
         </button>
 
         {/* Search Bar */}
@@ -129,6 +146,25 @@ export function HomeScreen() {
             ))}
           </div>
         </div>
+
+        {/* Nearest to You — only when location granted */}
+        {locationGranted && (
+          <div className="px-4 pb-4">
+            <div className="flex items-center justify-between mb-3">
+              <h2 className="text-lg font-bold text-gray-900 flex items-center gap-1.5">
+                <MapPin size={18} className="text-green-500" />
+                Nearest to You
+              </h2>
+            </div>
+            <div className="flex gap-3 overflow-x-auto no-scrollbar snap-x snap-mandatory pb-1">
+              {nearbyRestaurants.map((r) => (
+                <div key={r.id} className="min-w-[280px] snap-start">
+                  <RestaurantCardWide restaurant={r} />
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
 
         {/* Featured Section */}
         <div className="px-4 pb-4">

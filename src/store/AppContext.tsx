@@ -28,6 +28,8 @@ const initialState: AppState = {
   deliveryStep: 0,
   showIntervention: false,
   scrollY: 0,
+  locationPermission: 'idle',
+  userLocation: null,
 };
 
 type Action =
@@ -47,7 +49,8 @@ type Action =
   | { type: 'SHOW_INTERVENTION'; show: boolean }
   | { type: 'ADD_ORDER'; order: import('@/types').Order }
   | { type: 'UPDATE_STATS'; stats: Partial<import('@/types').UserStats> }
-  | { type: 'SET_SCROLL_Y'; y: number };
+  | { type: 'SET_SCROLL_Y'; y: number }
+  | { type: 'SET_LOCATION'; permission: AppState['locationPermission']; lat?: number; lng?: number };
 
 function appReducer(state: AppState, action: Action): AppState {
   switch (action.type) {
@@ -136,6 +139,15 @@ function appReducer(state: AppState, action: Action): AppState {
       return { ...state, userStats: { ...state.userStats, ...action.stats } };
     case 'SET_SCROLL_Y':
       return { ...state, scrollY: action.y };
+    case 'SET_LOCATION':
+      return {
+        ...state,
+        locationPermission: action.permission,
+        userLocation:
+          action.lat !== undefined && action.lng !== undefined
+            ? { lat: action.lat, lng: action.lng }
+            : state.userLocation,
+      };
     default:
       return state;
   }
